@@ -172,6 +172,11 @@ const ShippingAddressForm = ({
               }))
             }}
             data-testid="shipping-address-input"
+            regions={
+              cart?.region?.countries
+                ?.map((c) => c.iso_2)
+                .filter(Boolean) as string[]
+            }
           />
           <input
             type="hidden"

@@ -115,6 +115,11 @@ const BillingAddressForm = ({ cart }: { cart: B2BCart | null }) => {
               }))
             }}
             data-testid="billing-address-input"
+            regions={
+              cart?.region?.countries
+                ?.map((c) => c.iso_2)
+                .filter(Boolean) as string[]
+            }
           />
           <input
             type="hidden"

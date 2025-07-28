@@ -9,6 +9,7 @@ export async function GET(request: NextRequest) {
   try {
     const searchParams = request.nextUrl.searchParams
     const query = searchParams.get("query")
+    const regions = searchParams.get("regions")?.split(",") || ["GB"]
 
     if (!query) {
       return NextResponse.json(
@@ -20,7 +21,7 @@ export async function GET(request: NextRequest) {
     // Use autocomplete to get address suggestions
     const [{ suggestions }] = await placesClient.autocompletePlaces({
       input: query,
-      includedRegionCodes: [process.env.GOOGLE_MAPS_REGION || "GB"],
+      includedRegionCodes: regions,
     })
 
     return NextResponse.json({

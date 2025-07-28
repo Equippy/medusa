@@ -26,6 +26,7 @@ type GoogleAddressAutocompleteProps = {
   onAddressSelect?: (address: MedusaAddress) => void
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void
   className?: string
+  regions?: string[]
 }
 
 const GoogleAddressAutocomplete: React.FC<GoogleAddressAutocompleteProps> = ({
@@ -37,6 +38,7 @@ const GoogleAddressAutocomplete: React.FC<GoogleAddressAutocompleteProps> = ({
   onAddressSelect,
   onChange,
   className,
+  regions = ["GB"],
 }) => {
   const [suggestions, setSuggestions] = useState<AddressSuggestion[]>([])
   const [isLoading, setIsLoading] = useState(false)
@@ -56,7 +58,9 @@ const GoogleAddressAutocomplete: React.FC<GoogleAddressAutocompleteProps> = ({
     setIsLoading(true)
     try {
       const response = await fetch(
-        `/api/maps/autocomplete?query=${encodeURIComponent(searchQuery)}`
+        `/api/maps/autocomplete?query=${encodeURIComponent(
+          searchQuery
+        )}&regions=${regions}`
       )
 
       const data = await response.json()
@@ -80,10 +84,10 @@ const GoogleAddressAutocomplete: React.FC<GoogleAddressAutocompleteProps> = ({
     async (placeId: string, description: string) => {
       // Create synthetic event to update parent value
       const syntheticEvent = {
-        target: { name, value: description }
+        target: { name, value: description },
       } as React.ChangeEvent<HTMLInputElement>
       onChange(syntheticEvent)
-      
+
       setShowSuggestions(false)
       setSuggestions([])
       setSelectedIndex(-1)
