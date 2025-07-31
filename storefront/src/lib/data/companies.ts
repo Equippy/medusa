@@ -253,7 +253,9 @@ export const updateCompanyAddress = async (
   return address
 }
 
-export const deleteCompanyAddress = async (addressId: string): Promise<void> => {
+export const deleteCompanyAddress = async (
+  addressId: string
+): Promise<void> => {
   const headers = {
     ...(await getAuthHeaders()),
   }

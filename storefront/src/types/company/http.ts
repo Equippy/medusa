@@ -131,6 +131,9 @@ export type CompanyAddress = {
   postal_code: string;
   country_code: string;
   phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  companyName: string | null;
   is_default: boolean;
   company_id: string;
   created_at: string;
@@ -154,6 +157,9 @@ export type StoreCreateCompanyAddress = {
   postal_code: string;
   country_code: string;
   phone?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  companyName?: string | null;
   is_default?: boolean;
 };
 
@@ -167,5 +173,8 @@ export type StoreUpdateCompanyAddress = {
   postal_code?: string;
   country_code?: string;
   phone?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  companyName?: string | null;
   is_default?: boolean;
 };

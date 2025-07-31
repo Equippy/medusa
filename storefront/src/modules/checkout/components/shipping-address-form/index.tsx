@@ -79,10 +79,13 @@ const ShippingAddressForm = ({
     address &&
       setFormData((prevState: Record<string, any>) => ({
         ...prevState,
-        "shipping_address.first_name": address?.first_name?.toString() || "",
-        "shipping_address.last_name": address?.last_name?.toString() || "",
+        "shipping_address.first_name": address?.first_name?.toString() || 
+          (address as any)?.firstName?.toString() || "",
+        "shipping_address.last_name": address?.last_name?.toString() || 
+          (address as any)?.lastName?.toString() || "",
         "shipping_address.address_1": address?.address_1?.toString() || "",
-        "shipping_address.company": address?.company?.toString() || "",
+        "shipping_address.company": address?.company?.toString() || 
+          (address as any)?.companyName?.toString() || "",
         "shipping_address.postal_code": address?.postal_code?.toString() || "",
         "shipping_address.city": address?.city?.toString() || "",
         "shipping_address.country_code":

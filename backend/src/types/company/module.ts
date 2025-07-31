@@ -93,6 +93,9 @@ export interface ModuleCompanyAddress {
   postal_code: string;
   country_code: string;
   phone: string | null;
+  firstName: string | null;
+  lastName: string | null;
+  companyName: string | null;
   is_default: boolean;
   company_id: string;
   created_at: Date;
@@ -109,11 +112,15 @@ export type ModuleCreateCompanyAddress = {
   postal_code: string;
   country_code: string;
   phone?: string | null;
+  firstName?: string | null;
+  lastName?: string | null;
+  companyName?: string | null;
   is_default?: boolean;
   company_id: string;
 };
 
-export interface ModuleUpdateCompanyAddress extends Partial<ModuleCompanyAddress> {
+export interface ModuleUpdateCompanyAddress
+  extends Partial<ModuleCompanyAddress> {
   id: string;
 }
 

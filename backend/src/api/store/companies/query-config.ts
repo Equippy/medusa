@@ -79,6 +79,9 @@ export const storeApprovalSettingsQueryConfig = {
 export const storeCompanyAddressFields = [
   "id",
   "label",
+  "firstName",
+  "lastName",
+  "companyName",
   "address_1",
   "address_2",
   "city",

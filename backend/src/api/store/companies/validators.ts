@@ -104,10 +104,14 @@ export const StoreDeleteApproval = z.object({
 });
 
 /* CompanyAddress Validators */
-export type StoreGetCompanyAddressParamsType = z.infer<typeof StoreGetCompanyAddressParams>;
+export type StoreGetCompanyAddressParamsType = z.infer<
+  typeof StoreGetCompanyAddressParams
+>;
 export const StoreGetCompanyAddressParams = createSelectParams();
 
-export type StoreCreateCompanyAddressType = z.infer<typeof StoreCreateCompanyAddress>;
+export type StoreCreateCompanyAddressType = z.infer<
+  typeof StoreCreateCompanyAddress
+>;
 export const StoreCreateCompanyAddress = z
   .object({
     label: z.string(),
@@ -118,11 +122,16 @@ export const StoreCreateCompanyAddress = z
     postal_code: z.string(),
     country_code: z.string(),
     phone: z.string().optional().nullable(),
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    companyName: z.string().optional().nullable(),
     is_default: z.boolean().optional().default(false),
   })
   .strict();
 
-export type StoreUpdateCompanyAddressType = z.infer<typeof StoreUpdateCompanyAddress>;
+export type StoreUpdateCompanyAddressType = z.infer<
+  typeof StoreUpdateCompanyAddress
+>;
 export const StoreUpdateCompanyAddress = z
   .object({
     label: z.string().optional(),
@@ -133,6 +142,9 @@ export const StoreUpdateCompanyAddress = z
     postal_code: z.string().optional(),
     country_code: z.string().optional(),
     phone: z.string().optional().nullable(),
+    firstName: z.string().optional().nullable(),
+    lastName: z.string().optional().nullable(),
+    companyName: z.string().optional().nullable(),
     is_default: z.boolean().optional(),
   })
   .strict();
