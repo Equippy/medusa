@@ -41,3 +41,35 @@ export interface DespatchLabOrder {
   id: string;
   [key: string]: any;
 }
+
+export interface DespatchLabFulfillmentData {
+  id?: string;
+  orderId?: string;
+  tracking_number?: string;
+  label_url?: string;
+  tracking_url?: string;
+  [key: string]: any;
+}
+
+export interface DespatchLabShippingOption {
+  id: string;
+  name: string;
+  description?: string;
+  price: number;
+  estimated_delivery_days?: number;
+}
+
+export interface DespatchLabCalculatePriceData {
+  shipping_address?: any;
+  items?: any[];
+  currency_code?: string;
+  [key: string]: any;
+}
+
+export interface DespatchLabFulfillmentDocument {
+  tracking_number: string;
+  label_url?: string;
+  tracking_url?: string;
+  type: "label" | "invoice" | "customs" | "other";
+  [key: string]: any;
+}
