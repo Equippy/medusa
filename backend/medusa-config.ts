@@ -41,6 +41,11 @@ const config = {
     },
     [DESPATCH_LAB_MODULE]: {
       resolve: "./modules/despatch-lab",
+      options: {
+        apiUrl: process.env.DESPATCH_LAB_API_URL,
+        key: process.env.DESPATCH_LAB_KEY!,
+        secret: process.env.DESPATCH_LAB_SECRET!,
+      },
     },
     [Modules.NOTIFICATION]: {
       resolve: "@medusajs/medusa/notification",
