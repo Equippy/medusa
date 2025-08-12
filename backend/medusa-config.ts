@@ -1,5 +1,10 @@
 import type { InputConfig } from "@medusajs/framework/types";
-import { defineConfig, loadEnv, Modules } from "@medusajs/framework/utils";
+import {
+  defineConfig,
+  loadEnv,
+  Modules,
+  ContainerRegistrationKeys,
+} from "@medusajs/framework/utils";
 import { ALGOLIA_MODULE } from "./src/modules/algolia";
 import { APPROVAL_MODULE } from "./src/modules/approval";
 import { COMPANY_MODULE } from "./src/modules/company";
@@ -57,6 +62,31 @@ const config = {
     },
     [Modules.WORKFLOW_ENGINE]: {
       resolve: "@medusajs/medusa/workflow-engine-inmemory",
+    },
+    [Modules.AUTH]: {
+      resolve: "@medusajs/medusa/auth",
+      dependencies: [Modules.CACHE, ContainerRegistrationKeys.LOGGER],
+      options: {
+        providers: [
+          // default provider
+          {
+            resolve: "@medusajs/medusa/auth-emailpass",
+            id: "emailpass",
+          },
+          {
+            // if module provider is in a plugin, use `plugin-name/providers/my-auth`
+            resolve: "./src/modules/auth0",
+            id: "auth0",
+            options: {
+              domain: process.env.AUTH0_DOMAIN!,
+              clientId: process.env.AUTH0_CLIENT_ID!,
+              clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+              redirectUri: `${process.env.APP_BASE_URL}/auth/customer/auth0/callback`,
+              postLoginRedirectUrl: `${process.env.STOREFRONT_URL}/auth/callback`,
+            },
+          },
+        ],
+      },
     },
   },
 } as InputConfig;

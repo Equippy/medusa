@@ -9,7 +9,7 @@
     "medusa-b2b-storefront"
   ],
   "scripts": {
-    "dev": "next dev -p 8000",
+    "dev": "NODE_OPTIONS='--inspect' next dev -p 8000",
     "build": "next build",
     "start": "next start -p 8000",
     "lint": "next lint",
