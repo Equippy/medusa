@@ -74,15 +74,18 @@ const config = {
             id: "emailpass",
           },
           {
-            // if module provider is in a plugin, use `plugin-name/providers/my-auth`
-            resolve: "./src/modules/auth0",
-            id: "auth0",
+            resolve: "./src/modules/oidc",
+            id: "oidc",
             options: {
-              domain: process.env.AUTH0_DOMAIN!,
-              clientId: process.env.AUTH0_CLIENT_ID!,
-              clientSecret: process.env.AUTH0_CLIENT_SECRET!,
-              redirectUri: `${process.env.APP_BASE_URL}/auth/customer/auth0/callback`,
+              domain: process.env.OIDC_DOMAIN!,
+              clientId: process.env.OIDC_CLIENT_ID!,
+              clientSecret: process.env.OIDC_CLIENT_SECRET!,
+              // Customer/storefront
+              redirectUri: `${process.env.STORE_CORS}/auth/callback`,
               postLoginRedirectUrl: `${process.env.STOREFRONT_URL}/auth/callback`,
+              // Admin
+              adminRedirectUri: `${process.env.APP_BASE_URL}/auth/user/oidc/callback`,
+              adminPostLoginRedirectUrl: `${process.env.ADMIN_URL}/login/callback`,
             },
           },
         ],

@@ -7,7 +7,8 @@ const DEFAULT_REGION = process.env.NEXT_PUBLIC_DEFAULT_REGION || "us"
 
 // Public routes that don't require authentication
 const publicRoutes = [
-  "account",
+  "auth/callback", // OIDC callback endpoint
+  "account",       // account login page
 ]
 
 const regionMapCache = {
@@ -111,18 +112,40 @@ async function setCacheId(request: NextRequest, response: NextResponse) {
 }
 
 /**
+ * Checks if a route is public.
+ * @param pathname The pathname of the request.
+ * @returns True if the route is public, false otherwise.
+ */
+function isRoutePublic(pathname: string): boolean {
+  const pathWithoutLeadingSlash = pathname.startsWith('/') ? pathname.slice(1) : pathname
+  // Check if it's a global public route (outside country routing)
+  if (publicRoutes.some(route => pathWithoutLeadingSlash === route || pathWithoutLeadingSlash.startsWith(route + '/'))) {
+    return true
+  }
+  
+  // Remove country code from pathname for comparison
+  const pathWithoutCountry = pathname.split('/').slice(2).join('/')
+  
+  // Check standard public routes within country routing
+  return publicRoutes.some(route => 
+    pathWithoutCountry === route || pathWithoutCountry.startsWith(route + '/')
+  )
+}
+
+/**
  * Middleware to handle region selection, cache id, and authentication.
  */
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   // Check if the route is public
-  const isPublicRoute = publicRoutes.some(route => {
-    // Remove country code from pathname for comparison
-    const pathWithoutCountry = pathname.split('/').slice(2).join('/')
-    console.log("pathWithoutCountry", pathWithoutCountry)
-    return pathWithoutCountry.startsWith(route)
-  })
+  // const isPublicRoute = publicRoutes.some(route => {
+  //   // Remove country code from pathname for comparison
+  //   const pathWithoutCountry = pathname.split('/').slice(2).join('/')
+  //   console.log("pathWithoutCountry", pathWithoutCountry)
+  //   return pathWithoutCountry.startsWith(route)
+  // })
+  const isPublicRoute = isRoutePublic(pathname)
 
   // Get the session token from cookies
   const sessionToken = request.cookies.get("_medusa_jwt")?.value
