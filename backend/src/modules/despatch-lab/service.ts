@@ -14,6 +14,8 @@ import {
   DespatchLabAuthError,
   DespatchLabModuleOptions,
   DespatchLabOrder,
+  DespatchLabProductCreateRequest,
+  DespatchLabProductCreateResponse,
   ImpersonateRequest,
   ImpersonateResponse,
   RefreshTokenRequest,
@@ -126,6 +128,49 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
           throw new Error("Authentication failed for DespatchLab API");
         }
         throw new Error(`Failed to retrieve order: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
+  public async createProduct(
+    productData: DespatchLabProductCreateRequest
+  ): Promise<DespatchLabProductCreateResponse> {
+    if (!productData.customerId || !productData.sku) {
+      throw new Error("Customer ID and SKU are required");
+    }
+
+    try {
+      // Impersonate the customer to create products in their context
+      const impersonationResponse = await this.impersonate(
+        productData.customerId
+      );
+
+      // Use the impersonation tokens for the product creation request
+      const response = await this.makeRequest<DespatchLabProductCreateResponse>(
+        "/warehouse/products",
+        {
+          method: "POST",
+          body: JSON.stringify(productData),
+          headers: {
+            Authorization: `Bearer ${impersonationResponse.tokens.accessToken}`,
+          },
+        }
+      );
+
+      return response;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("404")) {
+          throw new Error(`Customer with ID ${productData.customerId} not found`);
+        }
+        if (error.message.includes("400")) {
+          throw new Error(`Invalid product data: ${error.message}`);
+        }
+        if (error.message.includes("401")) {
+          throw new Error("Authentication failed for DespatchLab API");
+        }
+        throw new Error(`Failed to create product: ${error.message}`);
       }
       throw error;
     }

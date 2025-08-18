@@ -126,6 +126,45 @@ export const AdminDeleteApprovalSettings = z.object({
   ids: z.array(z.string()),
 });
 
+/* Fulfillment Provider Config Validators */
+export type AdminGetFulfillmentProviderConfigParamsType = z.infer<
+  typeof AdminGetFulfillmentProviderConfigParams
+>;
+export const AdminGetFulfillmentProviderConfigParams = createSelectParams();
+
+export type AdminSetFulfillmentProviderConfigType = z.infer<
+  typeof AdminSetFulfillmentProviderConfig
+>;
+export const AdminSetFulfillmentProviderConfig = z
+  .object({
+    provider_id: z.string(),
+    config: z.object({
+      customerId: z.string().optional(),
+      depotId: z.string().optional(),
+      apiKey: z.string().optional(),
+      apiSecret: z.string().optional(),
+    }).optional(),
+    regions: z.array(z.string()).optional(),
+    is_default: z.boolean().optional(),
+  })
+  .strict();
+
+export type AdminUpdateFulfillmentProviderConfigType = z.infer<
+  typeof AdminUpdateFulfillmentProviderConfig
+>;
+export const AdminUpdateFulfillmentProviderConfig = z
+  .object({
+    config: z.object({
+      customerId: z.string().optional(),
+      depotId: z.string().optional(),
+      apiKey: z.string().optional(),
+      apiSecret: z.string().optional(),
+    }).optional(),
+    regions: z.array(z.string()).optional(),
+    is_default: z.boolean().optional(),
+  })
+  .strict();
+
 /* CompanyAddress Validators */
 export type AdminGetCompanyAddressParamsType = z.infer<
   typeof AdminGetCompanyAddressParams

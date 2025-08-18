@@ -13,7 +13,7 @@ import { useParams } from "react-router-dom";
 import { QueryEmployee } from "../../../../types";
 import { useAdminCustomerGroups, useCompany } from "../../../hooks/api";
 import { formatAmount } from "../../../utils";
-import { CompanyActionsMenu } from "../components";
+import { CompanyActionsMenu, FulfillmentProvidersSection } from "../components";
 import {
   EmployeeCreateDrawer,
   EmployeesActionsMenu,
@@ -294,6 +294,7 @@ const CompanyDetails = () => {
           </>
         )}
       </Container>
+      <FulfillmentProvidersSection company={company} />
       <Toaster />
     </div>
   );

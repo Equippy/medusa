@@ -73,3 +73,23 @@ export interface DespatchLabFulfillmentDocument {
   type: "label" | "invoice" | "customs" | "other";
   [key: string]: any;
 }
+
+export interface DespatchLabProduct {
+  id: string;
+  customerId: string;
+  sku: string;
+  description: string;
+  barcode?: string;
+  type: "Product" | "Bundle";
+  [key: string]: any;
+}
+
+export interface DespatchLabProductCreateRequest {
+  customerId: string;
+  sku: string;
+  description: string;
+  barcode?: string;
+  type: "Product" | "Bundle";
+}
+
+export type DespatchLabProductCreateResponse = string;

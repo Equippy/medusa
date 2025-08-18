@@ -1,7 +1,7 @@
 import { SubscriberArgs, type SubscriberConfig } from "@medusajs/framework";
 import { syncProductsWorkflow } from "../workflows/algolia/workflows/sync-products";
 
-export default async function handleProductEvents({
+export default async function ({
   event: { data },
   container,
 }: SubscriberArgs<{ id: string }>) {
