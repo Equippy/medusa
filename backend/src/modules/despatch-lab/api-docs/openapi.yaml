@@ -29,6 +29,14 @@ paths:
     $ref: './paths/products.yaml#/products'
   /warehouse/products/{productId}:
     $ref: './paths/products.yaml#/productById'
+  /warehouse/products/{productId}/configuration:
+    $ref: './paths/products.yaml#/productConfiguration'
+  /warehouse/products/{productId}/storage:
+    $ref: './paths/products.yaml#/productStorage'
+  /warehouse/products/{productId}/special-instructions:
+    $ref: './paths/products.yaml#/productSpecialInstructions'
+  /warehouse/products/{productId}/rules:
+    $ref: './paths/products.yaml#/productRules'
 
   # Customer management endpoints
   /core/customers:

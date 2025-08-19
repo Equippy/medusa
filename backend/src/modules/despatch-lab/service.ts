@@ -1,11 +1,4 @@
-import {
-  CalculatedShippingOptionPrice,
-  CreateFulfillmentResult,
-  CreateShippingOptionDTO,
-  FulfillmentDTO,
-  FulfillmentItemDTO,
-  FulfillmentOrderDTO,
-} from "@medusajs/framework/types";
+import { Logger } from "@medusajs/framework/types";
 import { AbstractFulfillmentProviderService } from "@medusajs/framework/utils";
 import {
   AuthenticateRequest,
@@ -16,88 +9,39 @@ import {
   DespatchLabOrder,
   DespatchLabProductCreateRequest,
   DespatchLabProductCreateResponse,
+  DespatchLabProductUpdateRequest,
+  DespatchLabProductUpdateResponse,
   ImpersonateRequest,
   ImpersonateResponse,
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from "./types";
 
-class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
+type InjectedDependencies = {
+  logger: Logger;
+};
+class DespatchLabService extends AbstractFulfillmentProviderService {
   static identifier = "despatch-lab";
   private readonly options: DespatchLabModuleOptions;
   private readonly apiUrl: string;
   private authContext: DespatchLabAuthContext;
+  private logger_: Logger;
 
   constructor(
-    container: any,
+    { logger }: InjectedDependencies,
     options: DespatchLabModuleOptions = {
       key: "",
       secret: "",
     }
   ) {
     super();
+    this.logger_ = logger;
     this.options = options;
     this.apiUrl = options.apiUrl || "https://api.despatchlab.tech/v1";
     this.authContext = {
       isAuthenticated: false,
     };
-  }
-
-  async calculatePrice(
-    optionData: any,
-    context: any
-  ): Promise<CalculatedShippingOptionPrice> {
-    // TODO: Implement shipping cost calculation via DespatchLab API
-    // This would typically call DespatchLab's shipping rate API
-    // For now, return a default rate
-    return {
-      calculated_amount: 0,
-      is_calculated_price_tax_inclusive: true,
-    };
-  }
-
-  async canCalculate(data: CreateShippingOptionDTO): Promise<boolean> {
-    // Validate if we can calculate shipping for this order
-    // Check if we have necessary data like shipping address, items, etc.
-    return true;
-  }
-
-  async createFulfillment(
-    data: Record<string, unknown>,
-    items: Partial<Omit<FulfillmentItemDTO, "fulfillment">>[],
-    order: Partial<FulfillmentOrderDTO> | undefined,
-    fulfillment: Partial<Omit<FulfillmentDTO, "provider_id" | "data" | "items">>
-  ): Promise<CreateFulfillmentResult> {
-    // TODO: Implement fulfillment creation in DespatchLab
-    // This would create a shipment/order in DespatchLab system
-    // For now, return a basic fulfillment object
-    return {
-      data: {},
-      labels: [],
-    };
-  }
-
-  async cancelFulfillment(data: Record<string, unknown>): Promise<any> {
-    // TODO: Implement fulfillment cancellation in DespatchLab
-    // This would cancel the shipment in DespatchLab system
-    return { cancelled: true };
-  }
-
-  async createReturnFulfillment(
-    fulfillment: Record<string, unknown>
-  ): Promise<CreateFulfillmentResult> {
-    // TODO: Implement return fulfillment in DespatchLab
-    // This would handle returns through DespatchLab
-    return {
-      data: {},
-      labels: [],
-    };
-  }
-
-  async getFulfillmentDocuments(data: any): Promise<never[]> {
-    // TODO: Implement document retrieval from DespatchLab
-    // This would get shipping labels, tracking info, etc.
-    return [];
+    this.authenticate();
   }
 
   public async getOrder(orderId: string): Promise<DespatchLabOrder> {
@@ -134,35 +78,118 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
   }
 
   public async createProduct(
-    productData: DespatchLabProductCreateRequest
+    productData: DespatchLabProductCreateRequest | DespatchLabProductUpdateRequest
   ): Promise<DespatchLabProductCreateResponse> {
     if (!productData.customerId || !productData.sku) {
       throw new Error("Customer ID and SKU are required");
     }
 
     try {
-      // Impersonate the customer to create products in their context
-      const impersonationResponse = await this.impersonate(
-        productData.customerId
-      );
+      // Phase 1: Create product with basic required fields only
+      const basicProductData = {
+        customerId: productData.customerId,
+        sku: productData.sku,
+        description: productData.description,
+        barcode: productData.barcode,
+        type: productData.type || "Product",
+      };
 
-      // Use the impersonation tokens for the product creation request
-      const response = await this.makeRequest<DespatchLabProductCreateResponse>(
-        "/warehouse/products",
-        {
-          method: "POST",
-          body: JSON.stringify(productData),
-          headers: {
-            Authorization: `Bearer ${impersonationResponse.tokens.accessToken}`,
-          },
+      const productId =
+        await this.makeAuthenticatedRequest<DespatchLabProductCreateResponse>(
+          "/warehouse/products",
+          {
+            method: "POST",
+            body: JSON.stringify(basicProductData),
+          }
+        );
+
+      // Phase 2: Update with additional data if this is a full product update request
+      if ('id' in productData || Object.keys(productData).length > 5) {
+        const fullProductData = {
+          id: productId,
+          ...productData,
+        } as DespatchLabProductUpdateRequest;
+
+        // Use Promise.allSettled to handle partial failures gracefully
+        const updatePromises: Promise<string | null>[] = [];
+
+        // Always call main details endpoint (handles SKU, description, barcode, etc.)
+        updatePromises.push(
+          this.updateProductDetails(productId, fullProductData).catch(
+            (error) => {
+              this.logger_.error(
+                `Failed to update details for product ${productId}:`,
+                error
+              );
+              return null;
+            }
+          )
+        );
+
+        // Only update configuration if dimensions/weight are valid
+        if (this.hasValidDimensions(fullProductData)) {
+          updatePromises.push(
+            this.updateProductConfiguration(productId, fullProductData).catch(
+              (error) => {
+                this.logger_.error(
+                  `Failed to update configuration for product ${productId}:`,
+                  error
+                );
+                return null;
+              }
+            )
+          );
         }
-      );
 
-      return response;
+        // Always call storage endpoint
+        updatePromises.push(
+          this.updateProductStorage(productId, fullProductData).catch(
+            (error) => {
+              this.logger_.error(
+                `Failed to update storage for product ${productId}:`,
+                error
+              );
+              return null;
+            }
+          )
+        );
+
+        // Always call special instructions endpoint
+        updatePromises.push(
+          this.updateProductSpecialInstructions(productId, fullProductData).catch(
+            (error) => {
+              this.logger_.error(
+                `Failed to update special instructions for product ${productId}:`,
+                error
+              );
+              return null;
+            }
+          )
+        );
+
+        // Always call rules endpoint
+        updatePromises.push(
+          this.updateProductRules(productId, fullProductData).catch(
+            (error) => {
+              this.logger_.error(
+                `Failed to update rules for product ${productId}:`,
+                error
+              );
+              return null;
+            }
+          )
+        );
+
+        await Promise.allSettled(updatePromises);
+      }
+
+      return productId;
     } catch (error) {
       if (error instanceof Error) {
         if (error.message.includes("404")) {
-          throw new Error(`Customer with ID ${productData.customerId} not found`);
+          throw new Error(
+            `Customer with ID ${productData.customerId} not found`
+          );
         }
         if (error.message.includes("400")) {
           throw new Error(`Invalid product data: ${error.message}`);
@@ -171,6 +198,110 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
           throw new Error("Authentication failed for DespatchLab API");
         }
         throw new Error(`Failed to create product: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
+  public async updateProduct(
+    productData: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    if (!productData.id || !productData.customerId) {
+      throw new Error("Product ID and Customer ID are required");
+    }
+
+    try {
+      // Make parallel calls to all endpoints
+      const updatePromises: Promise<string | null>[] = [];
+
+      // Always call main details endpoint first (handles SKU, description, barcode, etc.)
+      updatePromises.push(
+        this.updateProductDetails(productData.id, productData).catch(
+          (error) => {
+            this.logger_.error(
+              `Failed to update details for product ${productData.id}:`,
+              error
+            );
+            return null;
+          }
+        )
+      );
+
+      // Only update configuration if dimensions/weight are valid
+      if (this.hasValidDimensions(productData)) {
+        updatePromises.push(
+          this.updateProductConfiguration(productData.id, productData).catch(
+            (error) => {
+              this.logger_.error(
+                `Failed to update configuration for product ${productData.id}:`,
+                error
+              );
+              return null;
+            }
+          )
+        );
+      }
+
+      // Always call storage endpoint
+      updatePromises.push(
+        this.updateProductStorage(productData.id, productData).catch(
+          (error) => {
+            this.logger_.error(
+              `Failed to update storage for product ${productData.id}:`,
+              error
+            );
+            return null;
+          }
+        )
+      );
+
+      // Always call special instructions endpoint
+      updatePromises.push(
+        this.updateProductSpecialInstructions(productData.id, productData).catch(
+          (error) => {
+            this.logger_.error(
+              `Failed to update special instructions for product ${productData.id}:`,
+              error
+            );
+            return null;
+          }
+        )
+      );
+
+      // Always call rules endpoint
+      updatePromises.push(
+        this.updateProductRules(productData.id, productData).catch(
+          (error) => {
+            this.logger_.error(
+              `Failed to update rules for product ${productData.id}:`,
+              error
+            );
+            return null;
+          }
+        )
+      );
+
+      const results = await Promise.allSettled(updatePromises);
+      
+      // Check if all promises were rejected
+      const hasAnySuccess = results.some(result => result.status === 'fulfilled');
+      if (!hasAnySuccess) {
+        throw new Error("All product update operations failed");
+      }
+
+      return productData.id;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("404")) {
+          throw new Error(`Product with ID ${productData.id} not found`);
+        }
+        if (error.message.includes("400")) {
+          throw new Error(`Invalid product data: ${error.message}`);
+        }
+        if (error.message.includes("401")) {
+          throw new Error("Authentication failed for DespatchLab API");
+        }
+        throw new Error(`Failed to update product: ${error.message}`);
       }
       throw error;
     }
@@ -211,6 +342,7 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
     return this.makeRequest<T>(endpoint, {
       ...options,
       headers: {
+        "Content-Type": "application/json",
         Authorization: `Bearer ${this.authContext.tokens?.access}`,
         ...options.headers,
       },
@@ -238,6 +370,7 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
     );
 
     this.updateAuthContext(response);
+    this.logger_.info(`[DespatchLab] Authenticated with ${this.options.key}`);
     return response;
   }
 
@@ -250,7 +383,7 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
       token: this.authContext.tokens.refresh,
     };
 
-    const response = await this.makeRequest<RefreshTokenResponse>(
+    const response = await this.makeAuthenticatedRequest<RefreshTokenResponse>(
       "/auth/token/refresh",
       {
         method: "POST",
@@ -278,7 +411,7 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
       ...(depotId !== undefined && { depotId }),
     };
 
-    const response = await this.makeRequest<ImpersonateResponse>(
+    const response = await this.makeAuthenticatedRequest<ImpersonateResponse>(
       "/core/impersonation/impersonate",
       {
         method: "POST",
@@ -317,6 +450,80 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
       await this.authenticate();
     }
   }
+
+  private async updateProductDetails(
+    id: string,
+    data: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    return this.makeAuthenticatedRequest<DespatchLabProductUpdateResponse>(
+      `/warehouse/products/${id}`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  private async updateProductConfiguration(
+    id: string,
+    data: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    return this.makeAuthenticatedRequest<DespatchLabProductUpdateResponse>(
+      `/warehouse/products/${id}/configuration`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  private async updateProductStorage(
+    id: string,
+    data: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    return this.makeAuthenticatedRequest<DespatchLabProductUpdateResponse>(
+      `/warehouse/products/${id}/storage`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  private async updateProductSpecialInstructions(
+    id: string,
+    data: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    return this.makeAuthenticatedRequest<DespatchLabProductUpdateResponse>(
+      `/warehouse/products/${id}/special-instructions`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  private async updateProductRules(
+    id: string,
+    data: DespatchLabProductUpdateRequest
+  ): Promise<DespatchLabProductUpdateResponse> {
+    return this.makeAuthenticatedRequest<DespatchLabProductUpdateResponse>(
+      `/warehouse/products/${id}/rules`,
+      {
+        method: "PUT",
+        body: JSON.stringify(data),
+      }
+    );
+  }
+
+  private hasValidDimensions(data: DespatchLabProductUpdateRequest): boolean {
+    return (
+      (data.height !== undefined && data.height >= 0.1) ||
+      (data.width !== undefined && data.width >= 0.1) ||
+      (data.depth !== undefined && data.depth >= 0.1) ||
+      (data.weight !== undefined && parseFloat(data.weight) >= 0.1)
+    );
+  }
 }
 
-export default DespatchLabFulfillmentService;
+export default DespatchLabService;

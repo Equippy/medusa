@@ -1,2 +1,3 @@
 export * from "./get-order";
-export * from "./create-product";
+export * from "./sync-all-product-variants";
+export * from "./upsert-product-variant";

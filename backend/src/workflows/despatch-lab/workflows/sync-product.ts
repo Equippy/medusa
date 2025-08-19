@@ -2,16 +2,14 @@ import {
   createWorkflow,
   WorkflowResponse,
 } from "@medusajs/framework/workflows-sdk";
-import { 
-  createDespatchLabProductStep, 
-  CreateProductInput 
-} from "../steps/create-product";
+import { syncAllProductVariantsStep } from "../steps/sync-all-product-variants";
 
 export const syncProductToDespatchLabWorkflow = createWorkflow(
   "sync-product-to-despatch-lab",
-  (input: CreateProductInput) => {
-    const result = createDespatchLabProductStep(input);
+  (input: { productId: string }) => {
+    // Sync all product variants in a single step
+    const results = syncAllProductVariantsStep(input);
 
-    return new WorkflowResponse(result);
+    return new WorkflowResponse(results);
   }
 );
