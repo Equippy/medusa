@@ -1,5 +1,5 @@
 import { Logger } from "@medusajs/framework/types";
-import { AbstractFulfillmentProviderService } from "@medusajs/framework/utils";
+import { MedusaService } from "@medusajs/framework/utils";
 import {
   AuthenticateRequest,
   AuthenticateResponse,
@@ -20,7 +20,7 @@ import {
 type InjectedDependencies = {
   logger: Logger;
 };
-class DespatchLabService extends AbstractFulfillmentProviderService {
+class DespatchLabService extends MedusaService({}) {
   static identifier = "despatch-lab";
   private readonly options: DespatchLabModuleOptions;
   private readonly apiUrl: string;
@@ -78,7 +78,9 @@ class DespatchLabService extends AbstractFulfillmentProviderService {
   }
 
   public async createProduct(
-    productData: DespatchLabProductCreateRequest | DespatchLabProductUpdateRequest
+    productData:
+      | DespatchLabProductCreateRequest
+      | DespatchLabProductUpdateRequest
   ): Promise<DespatchLabProductCreateResponse> {
     if (!productData.customerId || !productData.sku) {
       throw new Error("Customer ID and SKU are required");
@@ -104,7 +106,7 @@ class DespatchLabService extends AbstractFulfillmentProviderService {
         );
 
       // Phase 2: Update with additional data if this is a full product update request
-      if ('id' in productData || Object.keys(productData).length > 5) {
+      if ("id" in productData || Object.keys(productData).length > 5) {
         const fullProductData = {
           id: productId,
           ...productData,
@@ -156,28 +158,27 @@ class DespatchLabService extends AbstractFulfillmentProviderService {
 
         // Always call special instructions endpoint
         updatePromises.push(
-          this.updateProductSpecialInstructions(productId, fullProductData).catch(
-            (error) => {
-              this.logger_.error(
-                `Failed to update special instructions for product ${productId}:`,
-                error
-              );
-              return null;
-            }
-          )
+          this.updateProductSpecialInstructions(
+            productId,
+            fullProductData
+          ).catch((error) => {
+            this.logger_.error(
+              `Failed to update special instructions for product ${productId}:`,
+              error
+            );
+            return null;
+          })
         );
 
         // Always call rules endpoint
         updatePromises.push(
-          this.updateProductRules(productId, fullProductData).catch(
-            (error) => {
-              this.logger_.error(
-                `Failed to update rules for product ${productId}:`,
-                error
-              );
-              return null;
-            }
-          )
+          this.updateProductRules(productId, fullProductData).catch((error) => {
+            this.logger_.error(
+              `Failed to update rules for product ${productId}:`,
+              error
+            );
+            return null;
+          })
         );
 
         await Promise.allSettled(updatePromises);
@@ -257,34 +258,35 @@ class DespatchLabService extends AbstractFulfillmentProviderService {
 
       // Always call special instructions endpoint
       updatePromises.push(
-        this.updateProductSpecialInstructions(productData.id, productData).catch(
-          (error) => {
-            this.logger_.error(
-              `Failed to update special instructions for product ${productData.id}:`,
-              error
-            );
-            return null;
-          }
-        )
+        this.updateProductSpecialInstructions(
+          productData.id,
+          productData
+        ).catch((error) => {
+          this.logger_.error(
+            `Failed to update special instructions for product ${productData.id}:`,
+            error
+          );
+          return null;
+        })
       );
 
       // Always call rules endpoint
       updatePromises.push(
-        this.updateProductRules(productData.id, productData).catch(
-          (error) => {
-            this.logger_.error(
-              `Failed to update rules for product ${productData.id}:`,
-              error
-            );
-            return null;
-          }
-        )
+        this.updateProductRules(productData.id, productData).catch((error) => {
+          this.logger_.error(
+            `Failed to update rules for product ${productData.id}:`,
+            error
+          );
+          return null;
+        })
       );
 
       const results = await Promise.allSettled(updatePromises);
-      
+
       // Check if all promises were rejected
-      const hasAnySuccess = results.some(result => result.status === 'fulfilled');
+      const hasAnySuccess = results.some(
+        (result) => result.status === "fulfilled"
+      );
       if (!hasAnySuccess) {
         throw new Error("All product update operations failed");
       }
