@@ -1,0 +1,263 @@
+
+[{
+    "value": "cf8364f1-d5e9-45bf-a5c2-4cdb7af50901",
+    "text": "2 Man"
+}, {
+    "value": "88c41fed-f46f-4f95-b42b-e3567b939e9f",
+    "text": "3rd Party Collection"
+}, {
+    "value": "fc33ab33-17dd-476c-8ad8-f08462de68fa",
+    "text": "48 Hour"
+}, {
+    "value": "7a864030-891c-41ad-8375-30f70cddeb61",
+    "text": "48 Hour Packet"
+}, {
+    "value": "c785d493-0783-4d09-a4c2-884b877aae5a",
+    "text": "48 Hour XL (Not in Use)"
+}, {
+    "value": "a98dd664-db7e-4261-b7aa-71cfd6d38bc8",
+    "text": "72 Hour"
+}, {
+    "value": "5b62c5f0-2817-49da-b190-77ed05ed9762",
+    "text": "BFPO"
+}, {
+    "value": "9846cce2-8ea9-4daf-ac06-bed96549e551",
+    "text": "Click and Collect"
+}, {
+    "value": "62c44b8e-e0da-468e-9ab8-e7c5c9738341",
+    "text": "DPD Reverse It"
+}, {
+    "value": "31520f7d-86d8-4a2b-b78b-0bd7b425ccae",
+    "text": "DPD Swap It"
+}, {
+    "value": "5240503d-04cc-4e37-9dbe-10379e49285b",
+    "text": "Economy Pallet (Full Pallet)"
+}, {
+    "value": "7e0cae1d-2b3e-4e88-adef-ccb8ae76a670",
+    "text": "Economy Pallet (Half Pallet)"
+}, {
+    "value": "a9bb0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Economy Pallet (Micro Pallet)"
+}, {
+    "value": "cdfc233f-18ae-4f0c-a60a-d659a8a04f1d",
+    "text": "Economy Pallet (Quarter Pallet)"
+}, {
+    "value": "f5b40000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Economy Pallet (Quarter+ Pallet)"
+}, {
+    "value": "b915cb27-bf84-4923-a43e-95ebdef6d7f9",
+    "text": "Europe by Road"
+}, {
+    "value": "b6638380-bce3-4a22-a044-a9916ec210c6",
+    "text": "Express"
+}, {
+    "value": "8a5bd588-f0a6-45b3-88dc-556f66cc878c",
+    "text": "International Courier Pack"
+}, {
+    "value": "ceca899e-1904-46bb-b3e3-196456e7ffe3",
+    "text": "International Economy Tracked (Australia)"
+}, {
+    "value": "a9f37b93-222a-47e6-9213-c5c1fbc3f25e",
+    "text": "International Economy Tracked (USA)"
+}, {
+    "value": "39f8dbb7-6c17-46e7-8667-023ce9e3f90d",
+    "text": "International Standard Non Tracked (Large Letter)"
+}, {
+    "value": "85b63880-86f7-4788-948a-5d00a940d27b",
+    "text": "International Standard Non Tracked (Parcel)"
+}, {
+    "value": "35e69dfb-cb6a-40b0-a04c-15a862d18814",
+    "text": "International Tracked (Large Letter)"
+}, {
+    "value": "679c3967-857d-4244-bc40-f4b29bfc10b1",
+    "text": "International Tracked (Parcel)"
+}, {
+    "value": "ee37b742-011f-4673-b675-998ab8b19143",
+    "text": "Large Courier Pack (5kg) Next Day"
+}, {
+    "value": "2d370e72-6ab9-4f36-86a5-c19f740257bd",
+    "text": "Large Courier Pack (5kg) Next Day by 09:00"
+}, {
+    "value": "daae2187-157d-4c21-9c6a-7c9b3b3d03f5",
+    "text": "Large Courier Pack (5kg) Next Day by 10:30"
+}, {
+    "value": "4cb4fbe2-0f97-4101-bfad-bd8ff80375b6",
+    "text": "Large Courier Pack (5kg) Next Day by 12:00"
+}, {
+    "value": "55e160db-c3f6-4add-9316-96a79c56cfb9",
+    "text": "Large Courier Pack (5kg) Saturday"
+}, {
+    "value": "d5376c6b-8640-4c0c-8f1d-c32915a73a45",
+    "text": "Large Courier Pack (5kg) Sunday"
+}, {
+    "value": "c201c02c-e0de-4859-b403-adecfb3ba356",
+    "text": "Letter Pack (1kg) Next Day"
+}, {
+    "value": "dde1c4ce-c02b-4b7e-8c68-2f46bdd91c51",
+    "text": "Letter Pack (1kg) Next Day by 09:00"
+}, {
+    "value": "3acaf6c0-ee24-4f24-8529-dc479199932a",
+    "text": "Letter Pack (1kg) Next Day by 10:30"
+}, {
+    "value": "70309885-facc-4382-bb25-9e64f01f8fd4",
+    "text": "Letter Pack (1kg) Next Day by 12:00"
+}, {
+    "value": "2e27ec6c-627f-4242-b56d-ea45692b0f37",
+    "text": "Light and Large"
+}, {
+    "value": "a4adba7c-3784-46f8-936a-736a8a7395b9",
+    "text": "Local Delivery"
+}, {
+    "value": "abe2118d-eba9-4508-a628-756c747190eb",
+    "text": "Medium Courier Pack (2kg) Next Day"
+}, {
+    "value": "b1d4e4bf-ae2d-4870-96da-1d8bceccbd1e",
+    "text": "Medium Courier Pack (2kg) Next Day by 09:00"
+}, {
+    "value": "6403111b-c772-4fb9-b8eb-911e3e76a79c",
+    "text": "Medium Courier Pack (2kg) Next Day by 10:30"
+}, {
+    "value": "c0203601-5aed-4942-9a68-cbd67b5b17f7",
+    "text": "Medium Courier Pack (2kg) Next Day by 12:00"
+}, {
+    "value": "326a2589-46e9-4334-bdb3-43ab26ba5be0",
+    "text": "Next Day by 09:00"
+}, {
+    "value": "32bc1706-e375-49f6-b00b-091a01b6773e",
+    "text": "Next Day by 10:30"
+}, {
+    "value": "6dd44777-c851-4d60-bb89-f84b26311561",
+    "text": "Next Day by 12:00"
+}, {
+    "value": "eac758f4-10a1-474b-b45b-f94d4ffe981d",
+    "text": "Next Day by 13:00"
+}, {
+    "value": "b96f6136-2ef0-46ef-b9d3-f509085f3997",
+    "text": "Next Day Packet (3KG)"
+}, {
+    "value": "16c0bb8d-f36c-4957-842c-7f57bac4a062",
+    "text": "Next Day Pallet (Full Pallet)"
+}, {
+    "value": "3e0768ff-7da8-431b-b3cd-04e4b637db04",
+    "text": "Next Day Pallet (Half Pallet)"
+}, {
+    "value": "e1ba0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Next Day Pallet (Micro Pallet)"
+}, {
+    "value": "4ca78e00-e622-4c3b-9adb-847a63743a21",
+    "text": "Next Day Pallet (Quarter Pallet)"
+}, {
+    "value": "7eaf0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Next Day Pallet (Quarter+ Pallet)"
+}, {
+    "value": "ea345907-782d-4bf9-9ea6-5160415a61e1",
+    "text": "Retail Today"
+}, {
+    "value": "1d44a171-7b4e-4ef2-a9fd-8d40d4dc544e",
+    "text": "Return"
+}, {
+    "value": "4c159ce7-6396-4bc7-b51e-d55b51bbddca",
+    "text": "Saturday by 09:00"
+}, {
+    "value": "42a2beb5-7209-43ae-b203-b0f2e414435c",
+    "text": "Saturday by 10:30"
+}, {
+    "value": "8a0fe1aa-4dc9-4937-9337-cd26869423b8",
+    "text": "Saturday by 12:00"
+}, {
+    "value": "af13171b-d123-4711-8fb3-2c89948b5f9a",
+    "text": "Saturday by 13:00"
+}, {
+    "value": "0a97f957-9b6b-456b-88c9-fa06e0704002",
+    "text": "Saturday Pallet (Full Pallet)"
+}, {
+    "value": "c9058e8a-58f4-459d-a603-654dd81c5f22",
+    "text": "Saturday Pallet (Half Pallet)"
+}, {
+    "value": "62bc0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Saturday Pallet (Micro Pallet)"
+}, {
+    "value": "7cb6e51f-126a-4cef-8b83-8d51fc576fc7",
+    "text": "Saturday Pallet (Quarter Pallet)"
+}, {
+    "value": "9ab60000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Saturday Pallet (Quarter+ Pallet)"
+}, {
+    "value": "a60f2319-e1a6-47cf-a7c6-c7c123858e82",
+    "text": "Self Collect"
+}, {
+    "value": "f07b958b-9791-4e19-9fc8-e6bb6b3aa2c5",
+    "text": "Southern Ireland (2-3 Day)"
+}, {
+    "value": "42617fbc-4784-4017-aa69-829dd834bfe3",
+    "text": "Standard 24 (Large Letter)"
+}, {
+    "value": "237c1637-e381-4feb-b6e1-04320445e839",
+    "text": "Standard 24 (Parcel)"
+}, {
+    "value": "c86733b8-4b34-4f6e-99b1-6471d4b7238b",
+    "text": "Standard 48 (Large Letter)"
+}, {
+    "value": "acedb878-a2e6-4584-a927-f8c0b2d1cb0c",
+    "text": "Standard 48 (Parcel)"
+}, {
+    "value": "7af0d829-2a56-458c-beda-48590a675dc6",
+    "text": "Standard Next Day"
+}, {
+    "value": "b720a888-f822-49c0-85b8-2d6d6a8fdf95",
+    "text": "Standard Saturday"
+}, {
+    "value": "239d6441-05a8-49d8-ac56-fda4306bea4e",
+    "text": "Standard Sunday"
+}, {
+    "value": "4262fac5-cd0d-4eab-b013-6cdbad7f6be0",
+    "text": "Third Party Collection"
+}, {
+    "value": "c5b796f0-010b-4e8f-98dd-b892d6135b6c",
+    "text": "Timed Next Day Pallet (Full Pallet)"
+}, {
+    "value": "2fba3c14-ed44-4c89-a765-85511c5b95ce",
+    "text": "Timed Next Day Pallet (Half Pallet)"
+}, {
+    "value": "19bc0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Timed Next Day Pallet (Micro Pallet)"
+}, {
+    "value": "2e008f0e-7be0-4285-bc3f-9fae3c9480cc",
+    "text": "Timed Next Day Pallet (Quarter Pallet)"
+}, {
+    "value": "41b60000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Timed Next Day Pallet (Quarter+ Pallet)"
+}, {
+    "value": "5246909d-8ac3-41bb-9370-ba4262224008",
+    "text": "Timed Saturday Pallet (Full Pallet)"
+}, {
+    "value": "4ba39bac-d6ac-4f46-bf5c-db53875e20d3",
+    "text": "Timed Saturday Pallet (Half Pallet)"
+}, {
+    "value": "f6bc0000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Timed Saturday Pallet (Micro Pallet)"
+}, {
+    "value": "64063be9-7665-410c-aa61-1e480726f5b6",
+    "text": "Timed Saturday Pallet (Quarter Pallet)"
+}, {
+    "value": "7ab70000-f196-409c-a3d8-0b7ba95fbbb8",
+    "text": "Timed Saturday Pallet (Quarter+ Pallet)"
+}, {
+    "value": "47a93c16-3efe-47ea-a938-64c8752ec9ae",
+    "text": "TNT Special Services"
+}, {
+    "value": "48ff581f-3d61-47fc-a62a-df39d6721784",
+    "text": "Two Man"
+}, {
+    "value": "a8c8923c-00c4-4375-905e-a895514d3f37",
+    "text": "Worldwide Express"
+}, {
+    "value": "c5176477-a098-4f10-b127-f7afe0df5fbc",
+    "text": "Worldwide Express by 09:00"
+}, {
+    "value": "4d7dc5a9-f979-4f71-9275-8e69b43409ac",
+    "text": "Worldwide Express by 10:30"
+}, {
+    "value": "7cfca7c8-762d-4221-b2dd-da659f88304b",
+    "text": "Worldwide Express by 12:00"
+}]

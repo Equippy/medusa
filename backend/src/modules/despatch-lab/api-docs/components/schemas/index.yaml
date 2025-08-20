@@ -88,6 +88,131 @@ PaginationMeta:
       minimum: 0
       description: Total number of pages
 
+# Order Schemas
+Product:
+  type: object
+  required:
+    - quantity
+  properties:
+    id:
+      type: string
+      description: Product Id - Optional. If not provided, the SKU will be used to find the product.
+    sku:
+      type: string
+      description: Product SKU - Optional. If not provided, the Id will be used to find the product.
+    quantity:
+      type: integer
+      minimum: 1
+      description: Quantity
+
+OrderCreateRequest:
+  type: object
+  required:
+    - customerId
+    - customerReference
+    - printDespatchNote
+    - addPackagingToOrder
+    - deliveryType
+    - addressLine1
+    - townOrCity
+    - countyOrState
+    - postcodeOrZip
+    - locationType
+    - recipientName
+    - recipientEmail
+    - recipientNumber
+    - products
+  properties:
+    customerId:
+      type: string
+      format: uuid
+      description: Customer ID (GUID)
+    customerReference:
+      type: string
+      description: Customer reference
+    printDespatchNote:
+      type: boolean
+      description: Print despatch note?
+    addPackagingToOrder:
+      type: boolean
+      description: Add packaging to order?
+    deliveryType:
+      type: string
+      description: Delivery type
+    serviceTypeId:
+      type: string
+      description: Service Type Id - Optional. Either ServiceTypeId or ServiceType must be provided
+    serviceType:
+      type: string
+      description: Service Type - Optional. Either ServiceTypeId or ServiceType must be provided
+    vehicleTypeId:
+      type: string
+      description: Vehicle Type Id - Optional. Either VehicleTypeId or VehicleType must be provided
+    vehicleType:
+      type: string
+      description: Vehicle Type - Optional. Either VehicleTypeId or VehicleType must be provided
+    samedayServiceId:
+      type: string
+      description: Sameday Service Id - Optional. Either SamedayServiceId or SamedayService must be provided
+    samedayService:
+      type: string
+      description: Sameday Service - Optional. Either SamedayServiceId or SamedayService must be provided
+    featureId:
+      type: string
+      description: Feature Id - Optional. Either FeatureId or Feature must be provided
+    feature:
+      type: string
+      description: Feature - Optional. Either FeatureId or Feature must be provided
+    companyName:
+      type: string
+      description: Company name
+    addressLine1:
+      type: string
+      description: Address line 1
+    addressLine2:
+      type: string
+      description: Address line 2
+    addressLine3:
+      type: string
+      description: Address line 3
+    townOrCity:
+      type: string
+      description: Town/city
+    countyOrState:
+      type: string
+      description: County/state
+    postcodeOrZip:
+      type: string
+      description: Postcode/zip
+    countryId:
+      type: integer
+      format: int32
+      description: Country ID
+    locationType:
+      type: string
+      description: Location type
+    recipientName:
+      type: string
+      description: Recipient name
+    recipientEmail:
+      type: string
+      format: email
+      description: Recipient email
+    recipientNumber:
+      type: string
+      description: Recipient number
+    products:
+      type: array
+      items:
+        $ref: '#/Product'
+      minItems: 1
+      description: List of products
+
+OrderCreateResponse:
+  type: string
+  format: uuid
+  description: DespatchLab fulfillment order ID
+
 # Product Schemas
 ProductCreateRequest:
   type: object

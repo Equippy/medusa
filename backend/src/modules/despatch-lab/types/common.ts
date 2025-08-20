@@ -74,6 +74,43 @@ export interface DespatchLabDocument {
   [key: string]: any;
 }
 
+export interface DespatchLabOrderProduct {
+  id?: string;
+  sku?: string;
+  quantity: number;
+}
+
+export interface DespatchLabOrderCreateRequest {
+  customerId: string;
+  customerReference: string;
+  printDespatchNote: boolean;
+  addPackagingToOrder: boolean;
+  deliveryType: string;
+  serviceTypeId?: string;
+  serviceType?: string;
+  vehicleTypeId?: string;
+  vehicleType?: string;
+  samedayServiceId?: string;
+  samedayService?: string;
+  featureId?: string;
+  feature?: string;
+  companyName?: string;
+  addressLine1: string;
+  addressLine2?: string;
+  addressLine3?: string;
+  townOrCity: string;
+  countyOrState: string;
+  postcodeOrZip: string;
+  countryId?: number;
+  locationType: string;
+  recipientName: string;
+  recipientEmail: string;
+  recipientNumber: string;
+  products: DespatchLabOrderProduct[];
+}
+
+export type DespatchLabOrderCreateResponse = string;
+
 export interface DespatchLabProduct {
   id: string;
   customerId: string;
