@@ -4,24 +4,33 @@ import {
   CreateShippingOptionDTO,
   FulfillmentDTO,
   FulfillmentItemDTO,
+  FulfillmentOption,
   FulfillmentOrderDTO,
+  Logger,
 } from "@medusajs/framework/types";
 import { AbstractFulfillmentProviderService } from "@medusajs/framework/utils";
+import {
+  createDespatchLabOrderWorkflow,
+  CreateDespatchLabOrderWorkflowInput,
+} from "../../workflows/despatch-lab";
+
+type InjectedDependencies = {
+  logger: Logger;
+};
 
 class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
   static identifier = "despatch-lab";
+  private logger_: Logger;
 
-  constructor() {
+  constructor({ logger }: InjectedDependencies) {
     super();
+    this.logger_ = logger;
   }
 
   async calculatePrice(
     optionData: any,
     context: any
   ): Promise<CalculatedShippingOptionPrice> {
-    // TODO: Implement shipping cost calculation via DespatchLab API
-    // This would typically call DespatchLab's shipping rate API
-    // For now, return a default rate
     return {
       calculated_amount: 0,
       is_calculated_price_tax_inclusive: true,
@@ -29,8 +38,6 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
   }
 
   async canCalculate(data: CreateShippingOptionDTO): Promise<boolean> {
-    // Validate if we can calculate shipping for this order
-    // Check if we have necessary data like shipping address, items, etc.
     return true;
   }
 
@@ -40,36 +47,75 @@ class DespatchLabFulfillmentService extends AbstractFulfillmentProviderService {
     order: Partial<FulfillmentOrderDTO> | undefined,
     fulfillment: Partial<Omit<FulfillmentDTO, "provider_id" | "data" | "items">>
   ): Promise<CreateFulfillmentResult> {
-    // TODO: Implement fulfillment creation in DespatchLab
-    // This would create a shipment/order in DespatchLab system
-    // For now, return a basic fulfillment object
-    return {
-      data: {},
-      labels: [],
-    };
+    if (!order || !order.id) {
+      throw new Error("Order with ID is required for DespatchLab fulfillment");
+    }
+
+    try {
+      // Create the order in DespatchLab via workflow
+      const { result: despatchLabOrder } =
+        await createDespatchLabOrderWorkflow.run({
+          input: {
+            orderId: order.id,
+          } as CreateDespatchLabOrderWorkflowInput,
+        });
+
+      this.logger_.info(
+        `[DespatchLab] Created fulfillment for order ${order.id} with DespatchLab order ID ${despatchLabOrder.orderId}`
+      );
+
+      return {
+        data: {
+          despatchlab_order_id: despatchLabOrder.orderId,
+          // Note: DespatchLab API only returns order ID initially
+          // Tracking info would be available through separate API calls
+        },
+        labels: [], // No labels returned immediately from order creation
+      };
+    } catch (error) {
+      this.logger_.error("[DespatchLab] Failed to create fulfillment:", error);
+      throw error;
+    }
   }
 
   async cancelFulfillment(data: Record<string, unknown>): Promise<any> {
-    // TODO: Implement fulfillment cancellation in DespatchLab
-    // This would cancel the shipment in DespatchLab system
-    return { cancelled: true };
+    throw new Error("Not implemented");
   }
 
   async createReturnFulfillment(
     fulfillment: Record<string, unknown>
   ): Promise<CreateFulfillmentResult> {
-    // TODO: Implement return fulfillment in DespatchLab
-    // This would handle returns through DespatchLab
+    throw new Error("Not implemented");
+  }
+
+  async getFulfillmentDocuments(
+    data: Record<string, unknown>
+  ): Promise<never[]> {
+    return [];
+  }
+
+  async getFulfillmentOptions(): Promise<FulfillmentOption[]> {
+    return [
+      {
+        id: "standard",
+        name: "Standard shipping",
+        is_return: false,
+      },
+    ];
+  }
+
+  async validateFulfillmentData(
+    optionData: any,
+    data: any,
+    context: any
+  ): Promise<any> {
     return {
-      data: {},
-      labels: [],
+      data,
     };
   }
 
-  async getFulfillmentDocuments(data: any): Promise<never[]> {
-    // TODO: Implement document retrieval from DespatchLab
-    // This would get shipping labels, tracking info, etc.
-    return [];
+  async validateOption(data: any): Promise<boolean> {
+    return true;
   }
 }
 

@@ -1,9 +1,9 @@
 import type { InputConfig } from "@medusajs/framework/types";
 import { defineConfig, loadEnv, Modules } from "@medusajs/framework/utils";
-import { DESPATCH_LAB_MODULE } from "./src/modules/despatch-lab";
 import { ALGOLIA_MODULE } from "./src/modules/algolia";
 import { APPROVAL_MODULE } from "./src/modules/approval";
 import { COMPANY_MODULE } from "./src/modules/company";
+import { DESPATCH_LAB_MODULE } from "./src/modules/despatch-lab";
 import { QUOTE_MODULE } from "./src/modules/quote";
 
 loadEnv(process.env.NODE_ENV!, process.cwd());
@@ -49,13 +49,19 @@ const config = {
     },
     [Modules.FULFILLMENT]: {
       resolve: "@medusajs/medusa/fulfillment",
-      providers: [
-        {
-          resolve: "./modules/despatch-lab-fulfillment",
-          id: "despatch-lab",
-          options: {},
-        },
-      ],
+      options: {
+        providers: [
+          {
+            resolve: "@medusajs/medusa/fulfillment-manual",
+            id: "manual",
+          },
+          {
+            resolve: "./src/modules/despatch-lab-fulfillment",
+            id: "despatch-lab",
+            options: {},
+          },
+        ],
+      },
     },
     [Modules.NOTIFICATION]: {
       resolve: "@medusajs/medusa/notification",

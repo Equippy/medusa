@@ -4,6 +4,8 @@ import {
   createOrderFulfillmentWorkflow,
   createOrderShipmentWorkflow,
 } from "@medusajs/medusa/core-flows";
+import DespatchLabFulfillmentService from "src/modules/despatch-lab-fulfillment/service";
+import companyFulfillmentProvider from "../links/company-fulfillment-provider";
 
 function generateTrackingCode(countryCode: string = "XX"): string {
   // Generate a random tracking number in the format: XX123456789YY
@@ -24,6 +26,7 @@ export default async function autoFulfillOrder({
 }: SubscriberArgs<{ id: string }>) {
   const orderService = container.resolve(Modules.ORDER);
   const logger = container.resolve(ContainerRegistrationKeys.LOGGER);
+  const query = container.resolve(ContainerRegistrationKeys.QUERY);
 
   const orderId = data.id;
 
@@ -35,6 +38,48 @@ export default async function autoFulfillOrder({
   if (!order.items) {
     logger.error(`Order does not have items. OrderId=${order.id}.`);
     return;
+  }
+
+  if (!order.metadata?.despatchlab_customer_id) {
+    // If order has a company_id, try to get DespatchLab customer ID for fulfillment
+    const companyId = order.metadata?.company_id as string;
+    if (!companyId) {
+      throw new Error(
+        `Order ${order.id} does not have companyId, cannot be fulfilled`
+      );
+    }
+
+    // Query the company-fulfillment-provider link to get DespatchLab configuration
+    const { data: companyProviderLinks } = await query.graph(
+      {
+        entity: companyFulfillmentProvider.entryPoint,
+        filters: {
+          company_id: companyId,
+          fulfillment_provider_id: DespatchLabFulfillmentService.identifier,
+        },
+        fields: ["config"],
+      },
+      { throwIfKeyNotFound: true }
+    );
+
+    const despatchLabCustomerId = companyProviderLinks[0].config.customerId;
+    if (!despatchLabCustomerId) {
+      throw new Error(
+        `Order ${order.id} does not have despatchLabCustomerId, cannot be fulfilled`
+      );
+    }
+
+    // Update order metadata with DespatchLab customer ID
+    await orderService.updateOrders(order.id, {
+      metadata: {
+        ...order.metadata,
+        despatchlab_customer_id: despatchLabCustomerId,
+      },
+    });
+
+    logger.info(
+      `Added DespatchLab customer ID to order metadata. OrderId=${order.id}, DespatchLabCustomerId=${despatchLabCustomerId}`
+    );
   }
 
   const { result: fulfillment } = await createOrderFulfillmentWorkflow(

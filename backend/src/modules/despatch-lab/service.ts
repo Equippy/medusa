@@ -4,9 +4,10 @@ import {
   AuthenticateRequest,
   AuthenticateResponse,
   DespatchLabAuthContext,
-  DespatchLabAuthError,
   DespatchLabModuleOptions,
   DespatchLabOrder,
+  DespatchLabOrderCreateRequest,
+  DespatchLabOrderCreateResponse,
   DespatchLabProductCreateRequest,
   DespatchLabProductCreateResponse,
   DespatchLabProductUpdateRequest,
@@ -34,7 +35,7 @@ class DespatchLabService extends MedusaService({}) {
       secret: "",
     }
   ) {
-    super();
+    super(...arguments);
     this.logger_ = logger;
     this.options = options;
     this.apiUrl = options.apiUrl || "https://api.despatchlab.tech/v1";
@@ -309,6 +310,51 @@ class DespatchLabService extends MedusaService({}) {
     }
   }
 
+  public async createOrder(
+    orderData: DespatchLabOrderCreateRequest,
+    customerId?: string
+  ): Promise<DespatchLabOrderCreateResponse> {
+    if (!orderData.customerId || !orderData.customerReference) {
+      throw new Error("Customer ID and customer reference are required");
+    }
+
+    try {
+      // If a customerId is provided for impersonation, use that
+      // if (customerId) {
+      //   await this.impersonate(customerId);
+      // }
+
+      const orderId =
+        await this.makeAuthenticatedRequest<DespatchLabOrderCreateResponse>(
+          "/warehouse/orders",
+          {
+            method: "POST",
+            body: JSON.stringify(orderData),
+          }
+        );
+
+      this.logger_.info(
+        `[DespatchLab] Created order ${orderData.customerReference} with ID ${orderId}`
+      );
+
+      return orderId;
+    } catch (error) {
+      if (error instanceof Error) {
+        if (error.message.includes("404")) {
+          throw new Error(`Customer with ID ${orderData.customerId} not found`);
+        }
+        if (error.message.includes("400")) {
+          throw new Error(`Invalid order data: ${error.message}`);
+        }
+        if (error.message.includes("401")) {
+          throw new Error("Authentication failed for DespatchLab API");
+        }
+        throw new Error(`Failed to create order: ${error.message}`);
+      }
+      throw error;
+    }
+  }
+
   private async makeRequest<T>(
     endpoint: string,
     options: RequestInit = {}
@@ -323,16 +369,20 @@ class DespatchLabService extends MedusaService({}) {
       ...options,
     });
 
+    const responseBody = await response.text();
+
     if (!response.ok) {
-      const errorData = (await response.json()) as DespatchLabAuthError;
       throw new Error(
-        `DespatchLab API error: ${response.status} - ${
-          errorData.error || response.statusText
-        }`
+        `DespatchLab API error: ${response.status} - ${response.statusText}
+        ${responseBody}`
       );
     }
 
-    return response.json();
+    try {
+      return JSON.parse(responseBody);
+    } catch {
+      return this.safeExtractJSON(responseBody);
+    }
   }
 
   private async makeAuthenticatedRequest<T>(
@@ -525,6 +575,59 @@ class DespatchLabService extends MedusaService({}) {
       (data.depth !== undefined && data.depth >= 0.1) ||
       (data.weight !== undefined && parseFloat(data.weight) >= 0.1)
     );
+  }
+
+  private safeExtractJSON(str) {
+    if (!str || typeof str !== "string") {
+      return null;
+    }
+
+    let depth = 0;
+    let inString = false;
+    let escapeNext = false;
+    let jsonEnd = -1;
+
+    for (let i = 0; i < str.length; i++) {
+      const char = str[i];
+
+      if (escapeNext) {
+        escapeNext = false;
+        continue;
+      }
+
+      if (char === "\\") {
+        escapeNext = true;
+        continue;
+      }
+
+      if (char === '"') {
+        inString = !inString;
+        continue;
+      }
+
+      if (!inString) {
+        if (char === "{") depth++;
+        else if (char === "}") {
+          depth--;
+          if (depth === 0) {
+            jsonEnd = i;
+            break;
+          }
+        }
+      }
+    }
+
+    if (jsonEnd !== -1) {
+      try {
+        const jsonStr = str.substring(0, jsonEnd + 1);
+        return JSON.parse(jsonStr);
+      } catch (e) {
+        console.error("Failed to parse JSON:", e);
+        return undefined;
+      }
+    }
+
+    return undefined;
   }
 }
 
