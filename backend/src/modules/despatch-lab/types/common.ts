@@ -42,7 +42,7 @@ export interface DespatchLabOrder {
   [key: string]: any;
 }
 
-export interface DespatchLabFulfillmentData {
+export interface DespatchLabData {
   id?: string;
   orderId?: string;
   tracking_number?: string;
@@ -66,10 +66,115 @@ export interface DespatchLabCalculatePriceData {
   [key: string]: any;
 }
 
-export interface DespatchLabFulfillmentDocument {
+export interface DespatchLabDocument {
   tracking_number: string;
   label_url?: string;
   tracking_url?: string;
   type: "label" | "invoice" | "customs" | "other";
   [key: string]: any;
 }
+
+export interface DespatchLabProduct {
+  id: string;
+  customerId: string;
+  sku: string;
+  description: string;
+  barcode?: string;
+  type: "Product" | "Bundle";
+  [key: string]: any;
+}
+
+export interface DespatchLabProductCreateRequest {
+  customerId: string;
+  sku: string;
+  description: string;
+  barcode?: string;
+  type: "Product" | "Bundle";
+}
+
+export type DespatchLabProductCreateResponse = string;
+
+export interface DespatchLabProductUpdateRequest {
+  id: string;
+  customerId: string;
+  customerName?: string;
+  sku: string;
+  description: string;
+  barcode?: string;
+  type: "Product" | "Bundle";
+  typeName?: string;
+  uom?: string;
+  
+  // Dimensions and physical properties
+  height?: number;
+  width?: number;
+  depth?: number;
+  volume?: number;
+  unassembledHeight?: number;
+  unassembledWidth?: number;
+  unassembledDepth?: number;
+  unassembledVolume?: number;
+  weight?: string;
+  
+  // Origin and compliance
+  countryOfOrigin?: string;
+  commodityCode?: string;
+  code2?: string;
+  code3?: string;
+  
+  // Pricing
+  costPrice?: number;
+  salesPrice?: number;
+  channelApiIds?: string[] | null;
+  
+  // Stock and picking levels
+  minStockholding?: number;
+  minPickingLevel?: number;
+  maxPickingLevel?: number;
+  totalStock?: number;
+  
+  // Product rules and grading
+  grade?: string;
+  rotateBy?: "FIFO" | "LIFO" | "FEFO";
+  rotateByName?: string;
+  
+  // Storage and putaway settings
+  putawayType?: string;
+  putawayTypeName?: string;
+  isSameStorageRotation?: boolean;
+  isDifferentStorageRotation?: boolean;
+  isMixWithOtherProducts?: boolean;
+  
+  // Packaging settings
+  packagingType?: string;
+  packagingTypeName?: string;
+  toBeUsedForPrimaryPackaging?: boolean;
+  toBeUsedForSecondaryPackaging?: boolean;
+  primaryPackagingSkus?: string[];
+  secondaryPackagingSkus?: string[];
+  primaryPackagingIds?: string[];
+  secondaryPackagingIds?: string[];
+  bundleProducts?: any[];
+  
+  // Serial number and batch tracking
+  isSerialNumberIn?: boolean;
+  isSerialNumberOut?: boolean;
+  isRotationDateAtReceipt?: boolean;
+  dateFormat?: string | null;
+  isBatchNumberRequired?: boolean;
+  isPickLinesFromSingleBatch?: boolean;
+  
+  // Special instructions and handling
+  isFragile?: boolean | null;
+  isLiquid?: boolean | null;
+  isHazardous?: boolean | null;
+  requiresSecurity?: boolean | null;
+  requiresSignature?: boolean | null;
+  
+  // Status flags
+  usedInOrders?: boolean;
+  
+  [key: string]: any;
+}
+
+export type DespatchLabProductUpdateResponse = string;

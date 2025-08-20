@@ -6,3 +6,5 @@ export * from "./remove-company-employees-from-customer-group";
 export * from "./create-company-addresses";
 export * from "./update-company-addresses";
 export * from "./delete-company-addresses";
+export * from "./set-fulfillment-provider-config";
+export * from "./remove-fulfillment-provider-config";

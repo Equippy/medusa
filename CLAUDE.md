@@ -13,6 +13,21 @@ This is a B2B e-commerce starter built with Medusa 2.0 framework and Next.js, fo
 - **Search**: Algolia integration
 - **State Management**: Zustand for client state, Medusa SDK for API calls
 
+## Medusa v2 Documentation Reference
+
+**IMPORTANT**: Always consult the comprehensive Medusa v2 documentation in `/v2-docs.md` when reading, writing, or modifying any Medusa-related code. This file contains the complete Medusa v2 documentation and should be your primary reference for:
+
+- **Module Development**: Patterns for creating custom modules, services, and models
+- **Workflow Implementation**: Step-based operations and business logic organization
+- **API Route Development**: HTTP methods, validation, middleware, and error handling
+- **Admin Customization**: UI routes, widgets, and dashboard modifications  
+- **Testing Approaches**: Integration tests, unit tests, and testing tools
+- **Configuration Options**: Application settings, environment variables, and deployment
+- **Integration Patterns**: Third-party system integration and syncing strategies
+- **Build and Deployment**: Production builds, hosting, and deployment guides
+
+Before implementing any Medusa feature, search the v2-docs.md file for relevant examples and best practices to ensure compliance with the latest Medusa v2 patterns and conventions.
+
 ## Common Development Commands
 
 ### Backend (Medusa)

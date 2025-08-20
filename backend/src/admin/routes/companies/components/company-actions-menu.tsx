@@ -1,5 +1,5 @@
 import { HttpTypes } from "@medusajs/framework/types";
-import { Link, LockClosedSolid, PencilSquare, Trash } from "@medusajs/icons";
+import { Link, LockClosedSolid, PencilSquare, Trash, TruckFast } from "@medusajs/icons";
 import { toast } from "@medusajs/ui";
 import { QueryCompany } from "../../../../types";
 import { useState } from "react";
@@ -11,6 +11,7 @@ import {
   CompanyApprovalSettingsDrawer,
   CompanyCustomerGroupDrawer,
   CompanyUpdateDrawer,
+  FulfillmentProviderDrawer,
 } from "./";
 
 export const CompanyActionsMenu = ({
@@ -23,6 +24,7 @@ export const CompanyActionsMenu = ({
   const [editOpen, setEditOpen] = useState(false);
   const [customerGroupOpen, setCustomerGroupOpen] = useState(false);
   const [approvalSettingsOpen, setApprovalSettingsOpen] = useState(false);
+  const [fulfillmentProviderOpen, setFulfillmentProviderOpen] = useState(false);
   const [deleteOpen, setDeleteOpen] = useState(false);
   const { mutateAsync: mutateDelete, isPending: loadingDelete } =
     useDeleteCompany(company.id);
@@ -59,6 +61,11 @@ export const CompanyActionsMenu = ({
                 label: "Approval settings",
                 onClick: () => setApprovalSettingsOpen(true),
               },
+              {
+                icon: <TruckFast />,
+                label: "Fulfillment providers",
+                onClick: () => setFulfillmentProviderOpen(true),
+              },
             ],
           },
           {
@@ -88,6 +95,11 @@ export const CompanyActionsMenu = ({
         company={company}
         open={approvalSettingsOpen}
         setOpen={setApprovalSettingsOpen}
+      />
+      <FulfillmentProviderDrawer
+        company={company}
+        open={fulfillmentProviderOpen}
+        setOpen={setFulfillmentProviderOpen}
       />
       <DeletePrompt
         handleDelete={handleDelete}

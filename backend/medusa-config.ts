@@ -1,5 +1,6 @@
 import type { InputConfig } from "@medusajs/framework/types";
 import { defineConfig, loadEnv, Modules } from "@medusajs/framework/utils";
+import { DESPATCH_LAB_MODULE } from "./src/modules/despatch-lab";
 import { ALGOLIA_MODULE } from "./src/modules/algolia";
 import { APPROVAL_MODULE } from "./src/modules/approval";
 import { COMPANY_MODULE } from "./src/modules/company";
@@ -38,17 +39,21 @@ const config = {
         productIndexName: process.env.ALGOLIA_PRODUCT_INDEX_NAME!,
       },
     },
+    [DESPATCH_LAB_MODULE]: {
+      resolve: "./modules/despatch-lab",
+      options: {
+        apiUrl: process.env.DESPATCH_LAB_API_URL,
+        key: process.env.DESPATCH_LAB_KEY!,
+        secret: process.env.DESPATCH_LAB_SECRET!,
+      },
+    },
     [Modules.FULFILLMENT]: {
       resolve: "@medusajs/medusa/fulfillment",
       providers: [
         {
-          resolve: "./modules/despatch-lab",
+          resolve: "./modules/despatch-lab-fulfillment",
           id: "despatch-lab",
-          options: {
-            apiUrl: process.env.DESPATCH_LAB_API_URL,
-            key: process.env.DESPATCH_LAB_KEY!,
-            secret: process.env.DESPATCH_LAB_SECRET!,
-          },
+          options: {},
         },
       ],
     },

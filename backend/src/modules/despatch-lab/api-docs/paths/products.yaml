@@ -27,12 +27,141 @@ products:
                 data:
                   type: array
                   items:
-                    type: object
-                    # TODO: Define product schema based on actual API response
+                    $ref: '../components/schemas/index.yaml#/Product'
                 meta:
                   $ref: '../components/schemas/index.yaml#/PaginationMeta'
       '401':
         $ref: '../components/responses/index.yaml#/Unauthorized'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+  post:
+    summary: Create a new product
+    description: Create a new product in the DespatchLab warehouse system for a specific customer
+    operationId: createProduct
+    tags:
+      - Products
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductCreateRequest'
+          example:
+            customerId: "550e8400-e29b-41d4-a716-446655440000"
+            sku: "PROD-001"
+            description: "Premium Widget 2000"
+            barcode: "1234567890123"
+            type: "Product"
+    responses:
+      '201':
+        description: Product created successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductCreateResponse'
+            example:
+              id: "prod_123456"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
       '500':
         $ref: '../components/responses/index.yaml#/InternalServerError'
 
@@ -51,8 +180,402 @@ productById:
         content:
           application/json:
             schema:
-              type: object
-              # TODO: Define product schema based on actual API response
+              $ref: '../components/schemas/index.yaml#/Product'
+            example:
+              id: "prod_123456"
+              customerId: "550e8400-e29b-41d4-a716-446655440000"
+              sku: "PROD-001"
+              description: "Premium Widget 2000"
+              barcode: "1234567890123"
+              type: "Product"
+              stockQuantity: 100
+              createdAt: "2024-01-15T10:30:00Z"
+              updatedAt: "2024-01-15T15:45:00Z"
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+  put:
+    summary: Update product configuration
+    description: Update an existing product's configuration in the DespatchLab warehouse system
+    operationId: updateProductConfiguration
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "87090000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "TEST-002"
+            description: "description"
+            type: "Product"
+            typeName: "Product"
+            barcode: "002"
+            uom: "Item"
+            height: 1
+            width: 2
+            depth: 3
+            volume: 6
+            weight: "5"
+            minStockholding: 0
+            rotateBy: "FIFO"
+            putawayType: "Random"
+            packagingType: "OwnPackaging"
+    responses:
+      '200':
+        description: Product updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "87090000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productConfiguration:
+  put:
+    summary: Update product configuration
+    description: Update product physical configuration including dimensions, weight, and tracking requirements. Dimensions and weight must be at least 0.1 when provided.
+    operationId: updateProductConfiguration
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            height: 1
+            width: 2
+            depth: 3
+            volume: 6
+            weight: 4
+            isSerialNumberIn: false
+            isSerialNumberOut: false
+            isRotationDateAtReceipt: false
+            isBatchNumberRequired: false
+            isPickLinesFromSingleBatch: false
+            isFragile: true
+    responses:
+      '200':
+        description: Product configuration updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productStorage:
+  put:
+    summary: Update product storage settings
+    description: Update storage-related configuration including putaway type, storage rotation, mixing permissions, and stock levels.
+    operationId: updateProductStorage
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            putawayType: "Random"
+            putawayTypeName: "Random"
+            isSameStorageRotation: true
+            isDifferentStorageRotation: false
+            isMixWithOtherProducts: true
+            minStockholding: 0
+            minPickingLevel: 0
+            maxPickingLevel: 0
+    responses:
+      '200':
+        description: Product storage settings updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+
+productSpecialInstructions:
+  put:
+    summary: Update product special instructions
+    description: Update special handling instructions including fragile, liquid, hazardous, security, and signature requirements.
+    operationId: updateProductSpecialInstructions
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            isFragile: true
+            isLiquid: null
+            isHazardous: null
+            requiresSecurity: null
+            requiresSignature: null
+    responses:
+      '200':
+        description: Product special instructions updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
+      '401':
+        $ref: '../components/responses/index.yaml#/Unauthorized'
+      '404':
+        $ref: '../components/responses/index.yaml#/NotFound'
+      '500':
+        $ref: '../components/responses/index.yaml#/InternalServerError'
+productRules:
+  put:
+    summary: Update product rules
+    description: Update product grading and rotation rules including grade classification and rotation method (FIFO/LIFO/FEFO).
+    operationId: updateProductRules
+    tags:
+      - Products
+    parameters:
+      - $ref: '../components/parameters/index.yaml#/ProductId'
+    requestBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/index.yaml#/ProductUpdateRequest'
+          example:
+            id: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+            customerId: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+            customerName: "Diamond Test Account"
+            sku: "512-RED"
+            description: "16\" Ultra-Slim AI Laptop | 3K OLED | 1.1cm Thin | 6-Speaker Audio - 512 GB / Red"
+            type: "Product"
+            typeName: "Product"
+            barcode: "012345"
+            uom: "Item"
+            grade: "A"
+            rotateBy: "FIFO"
+            rotateByName: "FIFO"
+    responses:
+      '200':
+        description: Product rules updated successfully
+        content:
+          application/json:
+            schema:
+              $ref: '../components/schemas/index.yaml#/ProductUpdateResponse'
+            example: "fb0b0000-2cd5-45f2-bd6c-1371eb81e971"
+      '400':
+        $ref: '../components/responses/index.yaml#/BadRequest'
       '401':
         $ref: '../components/responses/index.yaml#/Unauthorized'
       '404':

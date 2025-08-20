@@ -87,3 +87,352 @@ PaginationMeta:
       type: integer
       minimum: 0
       description: Total number of pages
+
+# Product Schemas
+ProductCreateRequest:
+  type: object
+  required:
+    - customerId
+    - sku
+    - description
+    - type
+  properties:
+    customerId:
+      type: string
+      format: uuid
+      description: The customer ID this product belongs to
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    sku:
+      type: string
+      description: Stock Keeping Unit - unique identifier for the product
+      example: "PROD-001"
+    description:
+      type: string
+      description: Product description or title
+      example: "Premium Widget 2000"
+    barcode:
+      type: string
+      description: Barcode or EAN for the product (optional)
+      example: "1234567890123"
+    type:
+      type: string
+      enum: ["Product", "Bundle"]
+      description: Type of product
+      default: "Product"
+
+ProductCreateResponse:
+  type: object
+  properties:
+    id:
+      type: string
+      description: The unique identifier of the created product in DespatchLab
+      example: "prod_123456"
+
+Product:
+  type: object
+  properties:
+    id:
+      type: string
+      description: Unique product identifier
+      example: "prod_123456"
+    customerId:
+      type: string
+      format: uuid
+      description: Associated customer ID
+      example: "550e8400-e29b-41d4-a716-446655440000"
+    sku:
+      type: string
+      description: Stock Keeping Unit
+      example: "PROD-001"
+    description:
+      type: string
+      description: Product description
+      example: "Premium Widget 2000"
+    barcode:
+      type: string
+      description: Product barcode
+      example: "1234567890123"
+    type:
+      type: string
+      enum: ["Product", "Bundle"]
+      description: Product type
+      example: "Product"
+    stockQuantity:
+      type: integer
+      description: Current stock quantity
+      example: 100
+    createdAt:
+      type: string
+      format: date-time
+      description: Creation timestamp
+      example: "2024-01-15T10:30:00Z"
+    updatedAt:
+      type: string
+      format: date-time
+      description: Last update timestamp
+      example: "2024-01-15T15:45:00Z"
+
+ProductUpdateRequest:
+  type: object
+  required:
+    - id
+    - customerId
+    - sku
+    - description
+    - type
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Product unique identifier
+      example: "87090000-2cd5-45f2-bd6c-1371eb81e971"
+    customerId:
+      type: string
+      format: uuid
+      description: Customer ID this product belongs to
+      example: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+    customerName:
+      type: string
+      description: Customer name
+      example: "Diamond Test Account"
+    sku:
+      type: string
+      description: Stock Keeping Unit
+      example: "TEST-002"
+    description:
+      type: string
+      description: Product description
+      example: "Premium Widget 2000"
+    type:
+      type: string
+      enum: ["Product", "Bundle"]
+      description: Product type
+      example: "Product"
+    typeName:
+      type: string
+      description: Human-readable product type name
+      example: "Product"
+    barcode:
+      type: string
+      nullable: true
+      description: Product barcode
+      example: "002"
+    uom:
+      type: string
+      description: Unit of measure
+      example: "Item"
+    commodityCode:
+      type: string
+      nullable: true
+      description: Commodity code for customs/shipping
+    code2:
+      type: string
+      nullable: true
+      description: Additional product code field
+    code3:
+      type: string
+      nullable: true
+      description: Additional product code field
+    countryOfOrigin:
+      type: string
+      nullable: true
+      description: Country where the product was manufactured
+    costPrice:
+      type: number
+      description: Cost price of the product
+      example: 0
+    salesPrice:
+      type: number
+      description: Sales price of the product
+      example: 0
+    channelApiIds:
+      type: array
+      items:
+        type: string
+      nullable: true
+      description: API IDs for various sales channels
+    height:
+      type: number
+      description: Product height in configured units
+      example: 1
+    width:
+      type: number
+      description: Product width in configured units
+      example: 2
+    depth:
+      type: number
+      description: Product depth in configured units
+      example: 3
+    volume:
+      type: number
+      description: Product volume (calculated from dimensions)
+      example: 6
+    unassembledHeight:
+      type: number
+      description: Height when unassembled/flat packed
+      example: 0
+    unassembledWidth:
+      type: number
+      description: Width when unassembled/flat packed
+      example: 0
+    unassembledDepth:
+      type: number
+      description: Depth when unassembled/flat packed
+      example: 0
+    unassembledVolume:
+      type: number
+      description: Volume when unassembled/flat packed
+      example: 0
+    weight:
+      type: string
+      description: Product weight
+      example: "5"
+    isSerialNumberIn:
+      type: boolean
+      description: Whether serial numbers are required on receipt
+      example: false
+    isSerialNumberOut:
+      type: boolean
+      description: Whether serial numbers are required on dispatch
+      example: false
+    isRotationDateAtReceipt:
+      type: boolean
+      description: Whether rotation date is set at receipt
+      example: false
+    dateFormat:
+      type: string
+      nullable: true
+      description: Date format for rotation dates
+    isBatchNumberRequired:
+      type: boolean
+      description: Whether batch numbers are required
+      example: false
+    isPickLinesFromSingleBatch:
+      type: boolean
+      description: Whether picks must come from a single batch
+      example: false
+    putawayType:
+      type: string
+      description: How the product should be stored
+      example: "Random"
+    putawayTypeName:
+      type: string
+      description: Human-readable putaway type name
+      example: "Random"
+    isSameStorageRotation:
+      type: boolean
+      description: Whether same storage rotation applies
+      example: false
+    isDifferentStorageRotation:
+      type: boolean
+      description: Whether different storage rotation applies
+      example: false
+    isMixWithOtherProducts:
+      type: boolean
+      description: Whether this product can be mixed with others in storage
+      example: true
+    minStockholding:
+      type: number
+      description: Minimum stock level to maintain
+      example: 0
+    minPickingLevel:
+      type: number
+      description: Minimum picking level
+      example: 0
+    maxPickingLevel:
+      type: number
+      description: Maximum picking level
+      example: 0
+    grade:
+      type: string
+      description: Product grade (A, B, C)
+      example: "A"
+    rotateBy:
+      type: string
+      enum: ["FIFO", "LIFO", "FEFO"]
+      description: Stock rotation method
+      example: "FIFO"
+    rotateByName:
+      type: string
+      description: Human-readable rotation method name
+      example: "FIFO"
+    packagingType:
+      type: string
+      description: Type of packaging used
+      example: "OwnPackaging"
+    packagingTypeName:
+      type: string
+      description: Human-readable packaging type name
+      example: "Own Packaging"
+    toBeUsedForPrimaryPackaging:
+      type: boolean
+      description: Whether this product is used for primary packaging
+      example: false
+    toBeUsedForSecondaryPackaging:
+      type: boolean
+      description: Whether this product is used for secondary packaging
+      example: false
+    primaryPackagingSkus:
+      type: array
+      items:
+        type: string
+      description: SKUs of products used for primary packaging
+      example: []
+    secondaryPackagingSkus:
+      type: array
+      items:
+        type: string
+      description: SKUs of products used for secondary packaging
+      example: []
+    primaryPackagingIds:
+      type: array
+      items:
+        type: string
+      description: IDs of products used for primary packaging
+      example: []
+    secondaryPackagingIds:
+      type: array
+      items:
+        type: string
+      description: IDs of products used for secondary packaging
+      example: []
+    bundleProducts:
+      type: array
+      items:
+        type: object
+      description: Products included in bundle (if type is Bundle)
+      example: []
+    isFragile:
+      type: boolean
+      nullable: true
+      description: Whether the product is fragile
+    isLiquid:
+      type: boolean
+      nullable: true
+      description: Whether the product is liquid
+    isHazardous:
+      type: boolean
+      nullable: true
+      description: Whether the product is hazardous
+    requiresSecurity:
+      type: boolean
+      nullable: true
+      description: Whether the product requires special security
+    requiresSignature:
+      type: boolean
+      nullable: true
+      description: Whether delivery requires signature
+    totalStock:
+      type: number
+      description: Current total stock level
+      example: 0
+    usedInOrders:
+      type: boolean
+      description: Whether the product is currently used in orders
+      example: false
+
+ProductUpdateResponse:
+  type: string
+  format: uuid
+  description: The UUID of the updated product
+  example: "87090000-2cd5-45f2-bd6c-1371eb81e971"
