@@ -50,13 +50,6 @@ class DespatchLabService extends MedusaService({}) {
       throw new Error("Order ID is required");
     }
 
-    // Validate UUID format
-    const uuidRegex =
-      /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (!uuidRegex.test(orderId)) {
-      throw new Error("Invalid order ID format. Expected UUID.");
-    }
-
     try {
       const response = await this.makeAuthenticatedRequest<DespatchLabOrder>(
         `/warehouse/orders/${orderId}`
