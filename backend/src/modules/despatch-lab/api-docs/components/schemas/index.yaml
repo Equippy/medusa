@@ -561,3 +561,337 @@ ProductUpdateResponse:
   format: uuid
   description: The UUID of the updated product
   example: "87090000-2cd5-45f2-bd6c-1371eb81e971"
+
+# Order Detail Schemas
+OrderAddress:
+  type: object
+  properties:
+    companyName:
+      type: string
+      nullable: true
+      description: Company name for delivery address
+      example: null
+    addressLine1:
+      type: string
+      description: First line of delivery address
+      example: "D"
+    addressLine2:
+      type: string
+      nullable: true
+      description: Second line of delivery address
+      example: null
+    addressLine3:
+      type: string
+      nullable: true
+      description: Third line of delivery address
+      example: null
+    townOrCity:
+      type: string
+      description: Town or city for delivery
+      example: "F"
+    countyOrState:
+      type: string
+      description: County or state for delivery
+      example: ""
+    postcodeOrZip:
+      type: string
+      description: Postcode or ZIP code
+      example: "E"
+    countryId:
+      type: integer
+      description: Numeric country identifier
+      example: 1
+    countryName:
+      type: string
+      description: Full country name
+      example: "United Kingdom"
+    countryCode:
+      type: string
+      description: Two-letter country code
+      example: "GB"
+    addressLocationType:
+      type: string
+      description: Type of delivery location
+      example: "Business"
+
+OrderLine:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique identifier for the order line
+      example: "351a0000-94a0-475b-a969-0eecc7dcd4f9"
+    productId:
+      type: string
+      format: uuid
+      description: Product identifier in DespatchLab
+      example: "2d1a0000-94a0-475b-a969-0eecc7dcd4f9"
+    productSku:
+      type: string
+      description: Product SKU
+      example: "MOUSE-WHITE"
+    productDescription:
+      type: string
+      description: Full product description
+      example: "Wireless Rechargeable Mouse | Multi-Touch Surface - Mouse White"
+    quantity:
+      type: integer
+      description: Ordered quantity
+      example: 1
+    productType:
+      type: string
+      description: Type of product
+      example: "Product"
+    bundleProducts:
+      type: array
+      items:
+        type: object
+      description: Products included if this is a bundle
+      example: []
+    pickedAt:
+      type: string
+      nullable: true
+      format: date-time
+      description: When the item was picked
+      example: null
+    pickedFrom:
+      type: string
+      nullable: true
+      description: Location picked from
+      example: null
+    pickedQuantity:
+      type: integer
+      description: Quantity actually picked
+      example: 0
+    returnedQuantity:
+      type: integer
+      description: Quantity returned
+      example: 0
+    pickableQuantity:
+      type: integer
+      description: Quantity available to pick
+      example: 0
+    serialNumbers:
+      type: array
+      items:
+        type: string
+      description: Serial numbers for tracked items
+      example: []
+    batchNumbers:
+      type: array
+      items:
+        type: string
+      description: Batch numbers for tracked items
+      example: []
+    expiryDates:
+      type: array
+      items:
+        type: string
+        format: date
+      description: Expiry dates for tracked items
+      example: []
+
+Order:
+  type: object
+  properties:
+    id:
+      type: string
+      format: uuid
+      description: Unique order identifier
+      example: "341a0000-94a0-475b-a969-0eecc7dcd4f9"
+    orderDate:
+      type: string
+      format: date-time
+      description: Date and time when order was created
+      example: "2025-08-20T16:28:29.4125519"
+    customerId:
+      type: string
+      format: uuid
+      description: Customer ID this order belongs to
+      example: "127911ec-9bfd-45c3-9d4e-e48321991c15"
+    deliveryType:
+      type: string
+      description: Type of delivery service
+      example: "Overnight"
+    serviceTypeId:
+      type: string
+      format: uuid
+      description: Service type identifier
+      example: "fde829cd-34ed-4df3-b747-3c449d9b5ef9"
+    featureId:
+      type: string
+      format: uuid
+      description: Feature identifier for the service
+      example: "acedb878-a2e6-4584-a927-f8c0b2d1cb0c"
+    vehicleTypeId:
+      type: string
+      nullable: true
+      format: uuid
+      description: Vehicle type identifier if applicable
+      example: null
+    samedayServiceId:
+      type: string
+      nullable: true
+      format: uuid
+      description: Same day service identifier if applicable
+      example: null
+    orderNumber:
+      type: string
+      description: DespatchLab generated order number
+      example: "111000461"
+    customerReference:
+      type: string
+      description: Customer's reference for the order
+      example: "#3 order_01K33W4HZYHMC40REVSXX6R75Z"
+    recipientName:
+      type: string
+      description: Name of the recipient
+      example: "A B"
+    recipientEmail:
+      type: string
+      format: email
+      description: Email address of the recipient
+      example: "john@example.co.uk"
+    recipientNumber:
+      type: string
+      description: Phone number of the recipient
+      example: "C"
+    address:
+      $ref: '#/OrderAddress'
+    source:
+      type: string
+      description: Source of the order creation
+      example: "Manual"
+    status:
+      type: string
+      description: Current order status (known values include "CantPickAll", "Cancelled")
+      example: "CantPickAll"
+    statusName:
+      type: string
+      description: Human-readable status name
+      example: "Can't Pick All"
+    shipmentId:
+      type: string
+      nullable: true
+      format: uuid
+      description: Shipment identifier if shipped
+      example: null
+    shipmentNumber:
+      type: string
+      nullable: true
+      description: Shipment number if shipped
+      example: null
+    customerName:
+      type: string
+      description: Customer name
+      example: "Diamond Test Account"
+    depotId:
+      type: string
+      format: uuid
+      description: Depot handling the order
+      example: "fcb99603-bb6e-47cd-a70c-39f894293499"
+    depotName:
+      type: string
+      description: Name of the depot
+      example: "Test Depot"
+    serviceTypeName:
+      type: string
+      description: Human-readable service type name
+      example: "Mail"
+    featureName:
+      type: string
+      description: Human-readable feature name
+      example: "Standard 48 (Parcel)"
+    vehicleTypeName:
+      type: string
+      nullable: true
+      description: Vehicle type name if applicable
+      example: null
+    samedayServiceName:
+      type: string
+      nullable: true
+      description: Same day service name if applicable
+      example: null
+    orderLines:
+      type: array
+      items:
+        $ref: '#/OrderLine'
+      description: List of items in the order
+    isPickFeeEstimated:
+      type: boolean
+      description: Whether the pick fee is estimated
+      example: true
+    pickFee:
+      type: number
+      description: Fee for picking the order
+      example: 0
+    packagingCharge:
+      type: number
+      nullable: true
+      description: Charge for packaging if applicable
+      example: null
+    allocatedUserId:
+      type: string
+      nullable: true
+      format: uuid
+      description: User allocated to pick the order
+      example: null
+    allocatedUserName:
+      type: string
+      nullable: true
+      description: Name of allocated user
+      example: null
+    printDespatchNote:
+      type: boolean
+      description: Whether to print despatch note
+      example: true
+    addPackagingToOrder:
+      type: boolean
+      description: Whether packaging is added to order
+      example: false
+    isEditable:
+      type: boolean
+      description: Whether the order can be edited
+      example: true
+    carrierName:
+      type: string
+      nullable: true
+      description: Name of the carrier if assigned
+      example: null
+    isSamedayShipment:
+      type: boolean
+      description: Whether this is a same day shipment
+      example: false
+    lastestTracking:
+      type: string
+      nullable: true
+      description: Latest tracking information
+      example: null
+    expectedDeliveryDate:
+      type: string
+      nullable: true
+      format: date
+      description: Expected delivery date
+      example: null
+    canDownloadDespatchNote:
+      type: boolean
+      description: Whether despatch note can be downloaded
+      example: false
+    canAllocatePicker:
+      type: boolean
+      description: Whether a picker can be allocated
+      example: true
+    canCancelOrder:
+      type: boolean
+      description: Whether the order can be cancelled
+      example: true
+    isInvoiced:
+      type: boolean
+      description: Whether the order has been invoiced
+      example: false
+    orderValue:
+      type: number
+      nullable: true
+      description: Total value of the order
+      example: null

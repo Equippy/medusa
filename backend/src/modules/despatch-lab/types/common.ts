@@ -37,9 +37,83 @@ export interface DespatchLabAuthContext {
   isAuthenticated: boolean;
 }
 
+export interface DespatchLabOrderAddress {
+  companyName: string | null;
+  addressLine1: string;
+  addressLine2: string | null;
+  addressLine3: string | null;
+  townOrCity: string;
+  countyOrState: string;
+  postcodeOrZip: string;
+  countryId: number;
+  countryName: string;
+  countryCode: string;
+  addressLocationType: string;
+}
+
+export interface DespatchLabOrderLine {
+  id: string;
+  productId: string;
+  productSku: string;
+  productDescription: string;
+  quantity: number;
+  productType: string;
+  bundleProducts: any[];
+  pickedAt: string | null;
+  pickedFrom: string | null;
+  pickedQuantity: number;
+  returnedQuantity: number;
+  pickableQuantity: number;
+  serialNumbers: string[];
+  batchNumbers: string[];
+  expiryDates: string[];
+}
+
 export interface DespatchLabOrder {
   id: string;
-  [key: string]: any;
+  orderDate: string;
+  customerId: string;
+  deliveryType: string;
+  serviceTypeId: string;
+  featureId: string;
+  vehicleTypeId: string | null;
+  samedayServiceId: string | null;
+  orderNumber: string;
+  customerReference: string;
+  recipientName: string;
+  recipientEmail: string;
+  recipientNumber: string;
+  address: DespatchLabOrderAddress;
+  source: string;
+  status: string; // Known values: "CantPickAll", "Cancelled" - there may be others
+  statusName: string;
+  shipmentId: string | null;
+  shipmentNumber: string | null;
+  customerName: string;
+  depotId: string;
+  depotName: string;
+  serviceTypeName: string;
+  featureName: string;
+  vehicleTypeName: string | null;
+  samedayServiceName: string | null;
+  orderLines: DespatchLabOrderLine[];
+  isPickFeeEstimated: boolean;
+  pickFee: number;
+  packagingCharge: number | null;
+  allocatedUserId: string | null;
+  allocatedUserName: string | null;
+  printDespatchNote: boolean;
+  addPackagingToOrder: boolean;
+  isEditable: boolean;
+  carrierName: string | null;
+  isSamedayShipment: boolean;
+  lastestTracking: string | null;
+  expectedDeliveryDate: string | null;
+  canDownloadDespatchNote: boolean;
+  canAllocatePicker: boolean;
+  canCancelOrder: boolean;
+  isInvoiced: boolean;
+  orderValue: number | null;
 }
 
 export interface DespatchLabData {
