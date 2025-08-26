@@ -8,15 +8,12 @@ import {
   AuthenticationInput,
   AuthenticationResponse,
   Logger,
-  ICustomerModuleService,
 } from "@medusajs/framework/types"
 import * as client from "openid-client"
 
 
-
 type InjectedDependencies = {
   logger: Logger
-  [Modules.CUSTOMER]: ICustomerModuleService
 }
 
 type Options = {
@@ -50,14 +47,13 @@ class OidcProviderService extends AbstractAuthModuleProvider {
   // private state: string
 
   constructor (
-    { logger, [Modules.CUSTOMER]: customerService }: InjectedDependencies,
+    { logger }: InjectedDependencies,
     options: Options
   ) {
     super(...arguments)
 
     this.logger_ = logger
     this.options_ = options
-    this.customerService_ = customerService
     // this.code_verifier = client.randomPKCECodeVerifier()
     // this.nonce = client.randomNonce()
     // this.state = client.randomState()
@@ -175,6 +171,15 @@ class OidcProviderService extends AbstractAuthModuleProvider {
     }
   }
 
+  private extractCompany(userinfo: any): string | undefined {
+    return (
+      userinfo.company ||
+      userinfo.org_name ||
+      userinfo.org_id ||
+      undefined
+    )
+  }
+
   async validateCallback(
     data: AuthenticationInput,
     authIdentityProviderService: AuthIdentityProviderService
@@ -199,8 +204,8 @@ class OidcProviderService extends AbstractAuthModuleProvider {
 
       // Retrieve session data
       const sessionData = await this.getSessionState(params.state, authIdentityProviderService)
-
       const actorType = sessionData.actor_type || "customer"
+
       const redirectUrl = this.getRedirectUrl(actorType)
       const postLoginRedirectUrl = this.getPostLoginRedirectUrl(actorType)
 
@@ -213,11 +218,6 @@ class OidcProviderService extends AbstractAuthModuleProvider {
       })
 
       const currentUrl = new URL(`${redirectUrl}?${callbackParams.toString()}`)
-      // Object.entries(params).forEach(([key, value]) => {
-      //   if (value) {
-      //     currentUrl.searchParams.set(key, value)
-      //   }
-      // })
 
       const tokens = await client.authorizationCodeGrant(
         oidcClientConfig,
@@ -230,60 +230,61 @@ class OidcProviderService extends AbstractAuthModuleProvider {
       const claims = tokens.claims()!
       const userinfo = await client.fetchUserInfo(oidcClientConfig, tokens.access_token, claims.sub)
 
-      const entityId = userinfo.sub || userinfo.email
-      if (!entityId) {
+      const userId = userinfo.sub || userinfo.email
+      if (!userId) {
         return {
           success: false,
           error: "Failed to retrieve user information"
         }
       }
 
-      console.log("User Info:", userinfo)
-      console.log("Claims:", claims)
-      console.log("Entity ID:", entityId)
+      // console.log("User Info:", userinfo)
+      // console.log("Claims:", claims)
+      // console.log("Email:", userinfo.email)
 
       // const customerService = this.container_.resolve(
       //   Modules.CUSTOMER
       // ) as ICustomerModuleService
       // const customerModuleService = this.__container__.resolve(Modules.CUSTOMER)
 
-      // Check if customer already exists in Medusa
-      let customer
-      try {
-        const existingCustomers = await this.customerService_.listCustomers({
-          email: userinfo.email
-        })
-        customer = existingCustomers.length > 0 ? existingCustomers[0] : null
-      } catch (error) {
-        this.logger_.error("Error checking existing customer", error)
-        customer = null
-      }
+      // // Check if customer already exists in Medusa
+      // let customer
+      // try {
+      //   const existing = await this.customerService_.listCustomers({
+      //     email
+      //   })
+      //   customer = existing.length > 0 ? existing[0] : null
+      // } catch (error) {
+      //   this.logger_.error("Error checking existing customer", error)
+      //   customer = null
+      // }
 
-      // Create customer if doesn't exist
-      if (!customer) {
-        try {
-          customer = await this.customerService_.createCustomers({
-            email: userinfo.email,
-            first_name: userinfo.given_name || userinfo.name?.split(' ')[0] || '',
-            last_name: userinfo.family_name || userinfo.name?.split(' ').slice(1).join(' ') || '',
-            metadata: {
-              auth_provider: 'oidc',
-              oidc_sub: userinfo.sub,
-              picture: userinfo.picture,
-              email_verified: userinfo.email_verified
-            }
-          })
-          this.logger_.info("Created new customer")
-        } catch (error) {
-          this.logger_.error("Failed to create customer", error)
-          return {
-            success: false,
-            error: "Failed to create customer account"
-          }
-        }
-      } else {
-        this.logger_.info("Using existing customer")
-      }
+      // // Create customer if doesn't exist
+      // if (!customer) {
+      //   try {
+      //     customer = await this.customerService_.createCustomers({
+      //       email,
+      //       first_name: userinfo.given_name || userinfo.name?.split(' ')[0] || '',
+      //       last_name: userinfo.family_name || userinfo.name?.split(' ').slice(1).join(' ') || '',
+      //       metadata: {
+      //         auth_provider: 'oidc',
+      //         oidc_sub: userinfo.sub,
+      //         picture: userinfo.picture,
+      //         email_verified: userinfo.email_verified,
+      //         company: this.extractCompany(userinfo),
+      //       }
+      //     })
+      //     this.logger_.info("Created new customer")
+      //   } catch (error) {
+      //     this.logger_.error("Failed to create customer", error)
+      //     return {
+      //       success: false,
+      //       error: "Failed to create customer account"
+      //     }
+      //   }
+      // } else {
+      //   this.logger_.info("Using existing customer")
+      // }
 
       const providerMetadata = {
         sub: userinfo.sub,
@@ -297,29 +298,40 @@ class OidcProviderService extends AbstractAuthModuleProvider {
       }
 
       const userMetadata = {
-        avatar: userinfo.picture,
         email: userinfo.email,
         name: userinfo.name,
-        company: userinfo.org_id,
+        given_name: userinfo.given_name,
+        family_name: userinfo.family_name,
+        picture: userinfo.picture,
+        email_verified: userinfo.email_verified,
+        company: this.extractCompany(userinfo),
         actor_type: actorType,
       }
 
+      // console.log("Provider Metadata:", providerMetadata)
+      // console.log("User Metadata:", userMetadata)
+
+      // Upsert the auth identity
+
       let authIdentity
       try {
+        console.log("Retrieving existing auth identity for user:", userId)
         // Retrieve throws if auth identity not found
         authIdentity = await authIdentityProviderService.retrieve({
-          entity_id: entityId,
+          entity_id: userId,
         })
+        console.log("Existing Auth Identity:", authIdentity)
         // Update the auth identity
-        authIdentity = await authIdentityProviderService.update(authIdentity.id, {
-          provider_metadata: providerMetadata,
-          user_metadata: userMetadata,
-        })
+        // authIdentity = await authIdentityProviderService.update(
+        //   userId, {
+        //   provider_metadata: providerMetadata,
+        //   user_metadata: userMetadata,
+        // })
       } catch (error) {
         console.log("Error updating auth identity:", error)
         if (error.type === MedusaError.Types.NOT_FOUND) {
           authIdentity = await authIdentityProviderService.create({
-            entity_id: entityId,
+            entity_id: userId,
             user_metadata: userMetadata,
             provider_metadata: providerMetadata,
           })

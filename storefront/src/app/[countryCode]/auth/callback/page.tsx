@@ -1,10 +1,11 @@
 "use client"
 
 import { HttpTypes } from "@medusajs/types"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { decodeToken } from "react-jwt"
 import { useRouter, useSearchParams, useParams } from "next/navigation"
 import { sdk } from "@/lib/config"
+import { getAuthHeaders, getCacheOptions } from "@/lib/data/cookies"
 
 export default function OidcCallback() {
   const router = useRouter()
@@ -13,51 +14,76 @@ export default function OidcCallback() {
   const [status, setStatus] = useState<AuthStatus>('loading')
   const [customer, setCustomer] = useState<HttpTypes.StoreCustomer>()
   const [error, setError] = useState<string | null>(null)
-  // for other than Next.js
+
   // const queryParams = useMemo(() => {
-  //   const searchParams = new URLSearchParams(window.location.search)
-  //   return Object.fromEntries(searchParams.entries())
+  //   const sp = new URLSearchParams(window.location.search)
+  //   return Object.fromEntries(sp.entries())
   // }, [])
 
-  const sendCallback = async () => {
-    let token = ""
 
-    try {
-      token = await sdk.auth.callback(
-        "customer", 
-        "oidc", 
-        Object.fromEntries(searchParams.entries())
-      )
-    } catch (error) {
-      setError("Authentication Failed")
-      setStatus('error')
-      throw error
+  // const sendCallback = async () => {
+  //   let token = ""
+
+  //   try {
+  //     token = await sdk.auth.callback(
+  //       "customer", 
+  //       "oidc", 
+  //       Object.fromEntries(searchParams.entries())
+  //     )
+  //   } catch (error) {
+  //     setError("Authentication Failed")
+  //     setStatus('error')
+  //     throw error
+  //   }
+
+  //   return token
+  // }
+
+  const sendCallback = async () => {
+    const headers = {
+      ...(await getAuthHeaders()),
+    }
+    const params = Object.fromEntries(searchParams.entries())
+    // Call your custom API instead of sdk.auth.callback
+    const res: Response = await sdk.client.fetch("/auth/oidc", {
+      method: "POST",
+      headers: { "Content-Type": "application/json", ...headers },
+      body: params,
+      credentials: "include",
+    })
+
+    if (!res.ok) {
+      throw new Error("Authentication failed")
     }
 
-    return token
+    // Your API should return a JWT token (string) after it validates the provider
+    // and runs server-side creation logic, then refreshes if needed.
+    const { token } = await res.json()
+    return token as string
   }
 
-  const createCustomer = async () => {
-    // create customer
-    await sdk.store.customer.create({
-      email: "example@medusajs.com",
-    })
-  }
+  // const createCustomer = async () => {
+  //   // create customer
+  //   await sdk.store.customer.create({
+  //     email: "example@medusajs.com",
+  //   })
+  // }
 
-  const refreshToken = async () => {
-    // refresh the token
-    await sdk.auth.refresh()
-  }
+  // const refreshToken = async () => {
+  //   // refresh the token
+  //   await sdk.auth.refresh()
+  // }
 
   const validateCallback = async () => {
     const token = await sendCallback()
-    const decoded = decodeToken(token)
-    const shouldCreateCustomer = (decoded as { actor_id: string }).actor_id === ""
+    sdk.client.setToken(token)
+    // const decoded = decodeToken(token)
+    // const shouldCreateCustomer = (decoded as { actor_id: string }).actor_id === ""
 
-    if (shouldCreateCustomer) {
-      // await createCustomer()
-      await refreshToken()
-    }
+    // if (shouldCreateCustomer) {
+    //   await createCustomer()
+    //   await refreshToken()
+    // }
 
     // all subsequent requests are authenticated
     try {
