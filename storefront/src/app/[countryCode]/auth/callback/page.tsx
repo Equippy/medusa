@@ -45,21 +45,21 @@ export default function OidcCallback() {
     }
     const params = Object.fromEntries(searchParams.entries())
     // Call your custom API instead of sdk.auth.callback
-    const res: Response = await sdk.client.fetch("/auth/oidc", {
+    const res = await sdk.client.fetch<{ token: string }>("/auth/oidc", {
       method: "POST",
       headers: { "Content-Type": "application/json", ...headers },
       body: params,
       credentials: "include",
     })
 
-    if (!res.ok) {
+    if (!res) {
       throw new Error("Authentication failed")
     }
 
     // Your API should return a JWT token (string) after it validates the provider
     // and runs server-side creation logic, then refreshes if needed.
-    const { token } = await res.json()
-    return token as string
+    // const { token } = await res.json()
+    return res.token
   }
 
   // const createCustomer = async () => {
@@ -76,7 +76,14 @@ export default function OidcCallback() {
 
   const validateCallback = async () => {
     const token = await sendCallback()
-    sdk.client.setToken(token)
+
+    await fetch(`${process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL}/auth/session`, {
+      method: "POST",
+      headers: { Authorization: `Bearer ${token}` },
+      credentials: "include",
+    })
+
+    // sdk.client.setToken(token)
     // const decoded = decodeToken(token)
     // const shouldCreateCustomer = (decoded as { actor_id: string }).actor_id === ""
 
@@ -91,7 +98,9 @@ export default function OidcCallback() {
 
       setCustomer(customerData)
       setStatus('success')
-        
+
+      console.log(customerData)
+
       // Redirect to account page after successful authentication
       const countryCode = params.countryCode as string
       setTimeout(() => {

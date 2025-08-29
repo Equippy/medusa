@@ -29,6 +29,7 @@ export type ModuleCompany = {
   updated_at: Date;
   customer_group: CustomerGroupDTO;
   approval_settings: ModuleApprovalSettings;
+  auth_id: string | null;
 };
 
 export type ModuleCreateCompany = {
@@ -43,6 +44,7 @@ export type ModuleCreateCompany = {
   logo_url: string | null;
   currency_code: string;
   spending_limit_reset_frequency: ModuleCompanySpendingLimitResetFrequency | null;
+  auth_id?: string | null;
 };
 
 export interface ModuleUpdateCompany extends Partial<ModuleCompany> {

@@ -12,6 +12,7 @@ export const adminCompanyFields = [
   "country",
   "currency_code",
   "*employees",
+  "auth_id",
 ];
 
 export const adminCompanyQueryConfig = {

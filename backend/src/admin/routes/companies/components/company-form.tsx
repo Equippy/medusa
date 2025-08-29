@@ -152,6 +152,13 @@ export function CompanyForm({
             onChange={handleChange}
             placeholder="https://example.com/logo.png"
           />
+          <Label size="xsmall">Auth Provider ID</Label>
+          <Input
+            type="text"
+            name="auth_id"
+            value={formData.auth_id || ""}
+            onChange={handleChange}
+          />
         </div>
       </Drawer.Body>
       <Drawer.Footer>

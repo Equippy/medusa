@@ -23,6 +23,7 @@ export const StoreCreateCompany = z
       .enum(["never", "daily", "weekly", "monthly", "yearly"])
       .optional()
       .nullable(),
+    auth_id: z.string().optional().nullable(),
   })
   .strict();
 
@@ -43,6 +44,7 @@ export const StoreUpdateCompany = z
       .enum(["never", "daily", "weekly", "monthly", "yearly"])
       .optional()
       .nullable(),
+    auth_id: z.string().optional().nullable(),
   })
   .strict();
 

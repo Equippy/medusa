@@ -16,6 +16,7 @@ export interface CompanyDTO {
   customer_group?: CustomerGroupDTO;
   created_at: Date;
   updated_at: Date;
+  auth_id: string | null;
 }
 
 export interface EmployeeDTO extends CustomerDTO {

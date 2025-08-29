@@ -23,4 +23,5 @@ export const Company = model.define("company", {
     .default("monthly"),
   employees: model.hasMany(() => Employee),
   addresses: model.hasMany(() => CompanyAddress),
+  auth_id: model.text().nullable(),
 });

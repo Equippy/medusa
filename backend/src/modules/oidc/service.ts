@@ -304,7 +304,7 @@ class OidcProviderService extends AbstractAuthModuleProvider {
         family_name: userinfo.family_name,
         picture: userinfo.picture,
         email_verified: userinfo.email_verified,
-        company: this.extractCompany(userinfo),
+        org_id: this.extractCompany(userinfo),
         actor_type: actorType,
       }
 
@@ -320,13 +320,13 @@ class OidcProviderService extends AbstractAuthModuleProvider {
         authIdentity = await authIdentityProviderService.retrieve({
           entity_id: userId,
         })
-        console.log("Existing Auth Identity:", authIdentity)
+        // console.log("Existing Auth Identity:", authIdentity)
         // Update the auth identity
-        // authIdentity = await authIdentityProviderService.update(
-        //   userId, {
-        //   provider_metadata: providerMetadata,
-        //   user_metadata: userMetadata,
-        // })
+        authIdentity = await authIdentityProviderService.update(
+          userId, {
+          provider_metadata: providerMetadata,
+          user_metadata: userMetadata,
+        })
       } catch (error) {
         console.log("Error updating auth identity:", error)
         if (error.type === MedusaError.Types.NOT_FOUND) {

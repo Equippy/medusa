@@ -135,6 +135,12 @@ const CompanyDetails = () => {
                     </div>
                   </Table.Cell>
                 </Table.Row>
+                <Table.Row>
+                  <Table.Cell className="font-medium font-sans txt-compact-small">
+                    Auth Provider Id
+                  </Table.Cell>
+                  <Table.Cell>{company?.auth_id}</Table.Cell>
+                </Table.Row>
               </Table.Body>
             </Table>
           </>

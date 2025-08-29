@@ -33,6 +33,7 @@ export type AdminCreateCompany = {
   country: string | null;
   logo_url: string | null;
   currency_code: string | null;
+  auth_id: string | null;
 };
 
 export type AdminUpdateCompany = Partial<AdminCreateCompany>;
@@ -98,6 +99,7 @@ export type StoreUpdateCompany = {
   logo_url: string | null;
   currency_code: string;
   spending_limit_reset_frequency?: ModuleCompanySpendingLimitResetFrequency;
+  auth_id: string | null;
 };
 
 /* Employee */
